@@ -10,6 +10,13 @@ export function createContentStudioRouter() {
   const store = new PostStore();
   const router = express.Router();
 
+  // ── Config ──────────────────────────────────────────────────────────────────
+
+  router.get("/config", (_req, res) => {
+    const oauthBase = config.creatorOauthBaseUrl || config.appBaseUrl;
+    res.json({ oauthConnectUrl: `${oauthBase}/auth/creator/connect` });
+  });
+
   // ── Accounts ────────────────────────────────────────────────────────────────
 
   router.get("/accounts", async (req, res, next) => {

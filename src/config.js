@@ -41,6 +41,10 @@ export const config = {
     clientKey: required("TIKTOK_CREATOR_CLIENT_KEY"),
     clientSecret: required("TIKTOK_CREATOR_CLIENT_SECRET")
   },
+  // URL to redirect after OAuth (set to localhost on Render, empty on localhost)
+  oauthReturnUrl: required("OAUTH_RETURN_URL", ""),
+  // Base URL of the OAuth server (set to Render URL on localhost)
+  creatorOauthBaseUrl: required("CREATOR_OAUTH_BASE_URL", ""),
   google: {
     serviceAccountEmail: required("GOOGLE_SERVICE_ACCOUNT_EMAIL"),
     privateKey: normalizePrivateKey(required("GOOGLE_PRIVATE_KEY")),

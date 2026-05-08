@@ -46,7 +46,7 @@ export function createCreatorOAuthRouter() {
         console.warn("[CreatorOAuth] failed to fetch user info:", e.message);
       }
 
-      await store.saveAccount({
+      const accountData = {
         openId: tokenData.open_id,
         displayName,
         accessToken: tokenData.access_token,
@@ -54,8 +54,26 @@ export function createCreatorOAuthRouter() {
         expiresAt,
         scope: tokenData.scope,
         connectedAt: new Date().toISOString()
-      });
+      };
 
+      await store.saveAccount(accountData);
+
+      // If OAUTH_RETURN_URL set (on Render), relay token back to that server
+      const returnBase = config.oauthReturnUrl || config.appBaseUrl;
+      const encoded = Buffer.from(JSON.stringify(accountData)).toString("base64url");
+      res.redirect(`${returnBase}/auth/creator/save?d=${encoded}`);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // Receives relayed token from Render OAuth and saves to local store
+  router.get("/save", async (req, res, next) => {
+    try {
+      const { d } = req.query;
+      if (!d) return res.status(400).send("Missing token data");
+      const accountData = JSON.parse(Buffer.from(d, "base64url").toString("utf8"));
+      await store.saveAccount(accountData);
       res.redirect("/?tab=studio&connected=1");
     } catch (err) {
       next(err);

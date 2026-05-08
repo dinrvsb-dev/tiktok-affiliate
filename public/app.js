@@ -1128,6 +1128,11 @@ function studioSetPostStatus(msg, isError = false) {
 
 async function studioLoadAccounts() {
   try {
+    const { oauthConnectUrl } = await adminFetch("/api/studio/config");
+    studioEls.connectBtn.href = oauthConnectUrl;
+  } catch { /* keep default href */ }
+
+  try {
     const { accounts } = await adminFetch("/api/studio/accounts");
     const account = accounts[0];
     if (account) {
@@ -1143,7 +1148,6 @@ async function studioLoadAccounts() {
       studioEls.disconnectBtn.classList.add("hidden");
     }
   } catch (e) {
-    // Show connect button regardless — OAuth doesn't need admin key
     studioEls.accountStatus.textContent = e.message.includes("Unauthorized")
       ? "Masukkan Admin API Key dahulu, lepas tu refresh"
       : "Belum sambung akaun TikTok Creator";
