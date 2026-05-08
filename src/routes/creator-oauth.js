@@ -15,6 +15,11 @@ export function createCreatorOAuthRouter() {
   const store = new PostStore();
   const router = express.Router();
 
+  router.get("/debug-url", (req, res) => {
+    const { url } = tiktok.buildAuthUrl(getRedirectUri(), { state: "test" });
+    res.json({ redirectUri: getRedirectUri(), authUrl: url });
+  });
+
   router.get("/connect", (req, res) => {
     const state = `creator_${Date.now()}`;
     const { url, verifier } = tiktok.buildAuthUrl(getRedirectUri(), { state });
