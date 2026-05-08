@@ -36,7 +36,7 @@ async function main() {
   await submissionService.initialize();
 
   app.use(express.json({ limit: "20mb" }));
-  app.use(express.static(path.resolve(__dirname, "../public")));
+  app.use(express.static(path.join(process.cwd(), "public")));
   app.use("/media", express.static(config.mediaDir));
 
   app.get("/health", (_req, res) => {
