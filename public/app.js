@@ -1143,7 +1143,12 @@ async function studioLoadAccounts() {
       studioEls.disconnectBtn.classList.add("hidden");
     }
   } catch (e) {
-    studioEls.accountStatus.textContent = "Gagal semak akaun";
+    // Show connect button regardless — OAuth doesn't need admin key
+    studioEls.accountStatus.textContent = e.message.includes("Unauthorized")
+      ? "Masukkan Admin API Key dahulu, lepas tu refresh"
+      : "Belum sambung akaun TikTok Creator";
+    studioEls.connectBtn.classList.remove("hidden");
+    studioEls.disconnectBtn.classList.add("hidden");
   }
 }
 
