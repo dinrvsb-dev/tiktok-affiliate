@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="ms">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pendaftaran Affiliate</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+      .form-card {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 36px;
+      }
+      .form-card h1 { font-size: 2rem; margin-bottom: 6px; }
+      .form-card .intro { color: var(--muted); margin-bottom: 28px; }
+      .success-box {
+        display: none;
+        background: rgba(37,110,76,0.1);
+        border: 1px solid rgba(37,110,76,0.3);
+        border-radius: 18px;
+        padding: 28px;
+        text-align: center;
+        color: var(--success);
+      }
+      .success-box h2 { margin: 0 0 8px; }
+      .divider {
+        grid-column: 1 / -1;
+        border: none;
+        border-top: 1px solid var(--line);
+        margin: 4px 0;
+      }
+      .section-label {
+        grid-column: 1 / -1;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent-dark);
+        margin-bottom: -6px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <p class="eyebrow">TikTok Affiliate</p>
+        <h1>Borang Pendaftaran</h1>
+        <p class="intro">Sila isi maklumat lengkap anda. Admin akan semak dan menghubungi anda.</p>
+      </section>
+
+      <div class="card form-card">
+        <div id="successBox" class="success-box">
+          <h2>Pendaftaran Berjaya!</h2>
+          <p>Maklumat anda telah dihantar. Admin akan menghubungi anda tidak lama lagi.</p>
+        </div>
+
+        <form id="daftarForm" class="grid two-col">
+          <p class="section-label">Maklumat Peribadi</p>
+
+          <label style="grid-column:1/-1">
+            <span>Nama Penuh *</span>
+            <input name="namaLengkap" placeholder="Nama penuh mengikut IC" required>
+          </label>
+
+          <label>
+            <span>No. Telefon *</span>
+            <input name="noFon" type="tel" placeholder="0123456789" required>
+          </label>
+
+          <label>
+            <span>Emel *</span>
+            <input name="emel" type="email" placeholder="contoh@gmail.com" required>
+          </label>
+
+          <p class="section-label" style="margin-top:4px">Alamat Penghantaran</p>
+
+          <label style="grid-column:1/-1">
+            <span>Baris 1 (No. rumah & jalan)</span>
+            <input name="alamatBaris1" placeholder="cth: No. 12, Jalan Bahagia 3">
+          </label>
+          <label style="grid-column:1/-1">
+            <span>Baris 2</span>
+            <input name="alamatBaris2" placeholder="cth: Taman Maju">
+          </label>
+          <label style="grid-column:1/-1">
+            <span>Baris 3</span>
+            <input name="alamatBaris3" placeholder="cth: Fasa 2 (optional)">
+          </label>
+
+          <label>
+            <span>Poskod</span>
+            <input name="poskod" id="poskod" maxlength="5" placeholder="cth: 47500" inputmode="numeric">
+          </label>
+          <div></div>
+
+          <label>
+            <span>Daerah</span>
+            <input name="daerah" id="daerah" placeholder="Auto-fill (boleh edit)">
+          </label>
+          <label>
+            <span>Negeri</span>
+            <input name="negeri" id="negeri" placeholder="Auto-fill (boleh edit)">
+          </label>
+
+          <hr class="divider">
+          <p class="section-label">Maklumat TikTok</p>
+
+          <label style="grid-column:1/-1">
+            <span>Akaun TikTok Anda Sekarang</span>
+            <input name="akauntTiktok" placeholder="@username">
+          </label>
+
+          <hr class="divider">
+          <p class="section-label">Maklumat Bank</p>
+
+          <label>
+            <span>Nama Bank</span>
+            <select name="namaBank">
+              <option value="">-- Pilih Bank --</option>
+              <optgroup label="Bank Perdagangan">
+                <option>Maybank</option>
+                <option>CIMB Bank</option>
+                <option>Public Bank</option>
+                <option>RHB Bank</option>
+                <option>Hong Leong Bank</option>
+                <option>AmBank</option>
+                <option>UOB Malaysia</option>
+                <option>OCBC Bank Malaysia</option>
+                <option>HSBC Bank Malaysia</option>
+                <option>Standard Chartered Malaysia</option>
+                <option>Citibank Malaysia</option>
+                <option>Alliance Bank</option>
+                <option>Affin Bank</option>
+                <option>Bank Rakyat</option>
+                <option>Bank Islam</option>
+                <option>Bank Muamalat</option>
+                <option>BSN (Bank Simpanan Nasional)</option>
+                <option>Agrobank</option>
+                <option>Bank Pertanian Malaysia</option>
+              </optgroup>
+              <optgroup label="Bank Digital &amp; E-Wallet">
+                <option>GX Bank</option>
+                <option>Boost Bank</option>
+                <option>Touch 'n Go (TNG Digital)</option>
+                <option>Grab Financial</option>
+              </optgroup>
+              <optgroup label="Lain-lain">
+                <option>Lain-lain</option>
+              </optgroup>
+            </select>
+          </label>
+
+          <label>
+            <span>No. Akaun Bank</span>
+            <input name="noAkauntBank" placeholder="1234567890">
+          </label>
+
+          <div style="grid-column:1/-1" class="actions">
+            <button type="submit" class="primary">Hantar Pendaftaran</button>
+          </div>
+
+          <p id="errMsg" style="grid-column:1/-1;color:var(--danger);display:none"></p>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      const POSKOD = {
+        // PERLIS
+        "01000":["Kangar","Perlis"],"01007":["Kangar","Perlis"],"01009":["Kangar","Perlis"],
+        "01500":["Arau","Perlis"],"01600":["Arau","Perlis"],"01700":["Padang Besar","Perlis"],
+        "02000":["Kuala Perlis","Perlis"],"02400":["Simpang Ampat","Perlis"],
+        // KEDAH
+        "05000":["Alor Setar","Kedah"],"05050":["Alor Setar","Kedah"],"05100":["Alor Setar","Kedah"],
+        "05150":["Alor Setar","Kedah"],"05200":["Alor Setar","Kedah"],"05350":["Alor Setar","Kedah"],
+        "05400":["Alor Setar","Kedah"],"05460":["Alor Setar","Kedah"],"05500":["Alor Setar","Kedah"],
+        "05600":["Alor Setar","Kedah"],"05700":["Alor Setar","Kedah"],"05800":["Alor Setar","Kedah"],
+        "05900":["Alor Setar","Kedah"],"06000":["Jitra","Kedah"],"06100":["Jitra","Kedah"],
+        "06150":["Jitra","Kedah"],"06200":["Pokok Sena","Kedah"],"06300":["Kuala Nerang","Kedah"],
+        "06400":["Pendang","Kedah"],"06500":["Pendang","Kedah"],"06600":["Pendang","Kedah"],
+        "06700":["Pendang","Kedah"],"06710":["Pendang","Kedah"],"06720":["Pendang","Kedah"],
+        "06750":["Pendang","Kedah"],"06760":["Pendang","Kedah"],"06800":["Gurun","Kedah"],
+        "06810":["Gurun","Kedah"],"06820":["Gurun","Kedah"],"06900":["Yan","Kedah"],
+        "07000":["Sungai Petani","Kedah"],"07100":["Sungai Petani","Kedah"],"07150":["Sungai Petani","Kedah"],
+        "07200":["Sungai Petani","Kedah"],"07300":["Sungai Petani","Kedah"],"07400":["Sungai Petani","Kedah"],
+        "07600":["Kuala Ketil","Kedah"],"07700":["Baling","Kedah"],"07800":["Baling","Kedah"],
+        "07900":["Baling","Kedah"],"08000":["Sungai Petani","Kedah"],"08100":["Bedong","Kedah"],
+        "08200":["Sik","Kedah"],"08300":["Gunung Jerai","Kedah"],"08320":["Gunung Jerai","Kedah"],
+        "08400":["Merbok","Kedah"],"08500":["Kota Kuala Muda","Kedah"],"08600":["Kota Kuala Muda","Kedah"],
+        "08700":["Kota Kuala Muda","Kedah"],"08800":["Kota Kuala Muda","Kedah"],"09000":["Kulim","Kedah"],
+        "09100":["Kulim","Kedah"],"09200":["Kulim","Kedah"],"09300":["Kulim","Kedah"],
+        "09400":["Padang Serai","Kedah"],"09500":["Padang Serai","Kedah"],"09600":["Lunas","Kedah"],
+        "09700":["Kupang","Kedah"],"09800":["Kupang","Kedah"],"09810":["Kupang","Kedah"],
+        // PULAU PINANG
+        "10000":["Georgetown","Pulau Pinang"],"10050":["Georgetown","Pulau Pinang"],
+        "10100":["Georgetown","Pulau Pinang"],"10150":["Georgetown","Pulau Pinang"],
+        "10200":["Georgetown","Pulau Pinang"],"10250":["Georgetown","Pulau Pinang"],
+        "10300":["Georgetown","Pulau Pinang"],"10350":["Georgetown","Pulau Pinang"],
+        "10400":["Georgetown","Pulau Pinang"],"10450":["Georgetown","Pulau Pinang"],
+        "10460":["Georgetown","Pulau Pinang"],"10470":["Georgetown","Pulau Pinang"],
+        "10500":["Ayer Itam","Pulau Pinang"],"10502":["Ayer Itam","Pulau Pinang"],
+        "10503":["Ayer Itam","Pulau Pinang"],"10504":["Ayer Itam","Pulau Pinang"],
+        "10505":["Ayer Itam","Pulau Pinang"],"10506":["Ayer Itam","Pulau Pinang"],
+        "10050":["Penang Hill","Pulau Pinang"],"10550":["Tanjong Bungah","Pulau Pinang"],
+        "10600":["Georgetown","Pulau Pinang"],"10620":["Batu Ferringhi","Pulau Pinang"],
+        "10670":["Teluk Bahang","Pulau Pinang"],"10700":["Bukit Mertajam","Pulau Pinang"],
+        "10710":["Bukit Mertajam","Pulau Pinang"],"10720":["Bukit Mertajam","Pulau Pinang"],
+        "10730":["Bukit Mertajam","Pulau Pinang"],"10740":["Bukit Mertajam","Pulau Pinang"],
+        "10750":["Bukit Mertajam","Pulau Pinang"],"10760":["Bukit Mertajam","Pulau Pinang"],
+        "10800":["Bukit Mertajam","Pulau Pinang"],"10810":["Bukit Mertajam","Pulau Pinang"],
+        "10820":["Bukit Mertajam","Pulau Pinang"],"10900":["Balik Pulau","Pulau Pinang"],
+        "10910":["Balik Pulau","Pulau Pinang"],"10911":["Balik Pulau","Pulau Pinang"],
+        "10912":["Balik Pulau","Pulau Pinang"],"10920":["Balik Pulau","Pulau Pinang"],
+        "10930":["Balik Pulau","Pulau Pinang"],"10940":["Balik Pulau","Pulau Pinang"],
+        "10950":["Balik Pulau","Pulau Pinang"],"10960":["Balik Pulau","Pulau Pinang"],
+        "11000":["Balik Pulau","Pulau Pinang"],"11010":["Balik Pulau","Pulau Pinang"],
+        "11020":["Balik Pulau","Pulau Pinang"],"11030":["Balik Pulau","Pulau Pinang"],
+        "11040":["Balik Pulau","Pulau Pinang"],"11050":["Balik Pulau","Pulau Pinang"],
+        "11060":["Balik Pulau","Pulau Pinang"],"11070":["Balik Pulau","Pulau Pinang"],
+        "11080":["Balik Pulau","Pulau Pinang"],"11090":["Balik Pulau","Pulau Pinang"],
+        "11100":["Balik Pulau","Pulau Pinang"],"11200":["Penaga","Pulau Pinang"],
+        "11300":["Kepala Batas","Pulau Pinang"],"11400":["Kepala Batas","Pulau Pinang"],
+        "11500":["Kepala Batas","Pulau Pinang"],"11600":["Georgetown","Pulau Pinang"],
+        "11700":["Gelugor","Pulau Pinang"],"11800":["Gelugor","Pulau Pinang"],
+        "11900":["Bayan Lepas","Pulau Pinang"],"11910":["Bayan Lepas","Pulau Pinang"],
+        "11920":["Bayan Lepas","Pulau Pinang"],"11950":["Bayan Lepas","Pulau Pinang"],
+        "11960":["Bayan Lepas","Pulau Pinang"],"12000":["Butterworth","Pulau Pinang"],
+        "12100":["Butterworth","Pulau Pinang"],"12200":["Butterworth","Pulau Pinang"],
+        "12300":["Butterworth","Pulau Pinang"],"12400":["Butterworth","Pulau Pinang"],
+        "12450":["Butterworth","Pulau Pinang"],"12460":["Butterworth","Pulau Pinang"],
+        "12480":["Butterworth","Pulau Pinang"],"12490":["Butterworth","Pulau Pinang"],
+        "12500":["Butterworth","Pulau Pinang"],"12600":["Perai","Pulau Pinang"],
+        "12700":["Perai","Pulau Pinang"],"12710":["Perai","Pulau Pinang"],
+        "12720":["Perai","Pulau Pinang"],"12730":["Perai","Pulau Pinang"],
+        "12200":["Nibong Tebal","Pulau Pinang"],"14000":["Bukit Mertajam","Pulau Pinang"],
+        "14020":["Bukit Mertajam","Pulau Pinang"],"14030":["Bukit Mertajam","Pulau Pinang"],
+        "14040":["Bukit Mertajam","Pulau Pinang"],"14200":["Bukit Mertajam","Pulau Pinang"],
+        "14300":["Nibong Tebal","Pulau Pinang"],"14400":["Nibong Tebal","Pulau Pinang"],
+        "14500":["Nibong Tebal","Pulau Pinang"],"14600":["Nibong Tebal","Pulau Pinang"],
+        "14610":["Nibong Tebal","Pulau Pinang"],"14620":["Nibong Tebal","Pulau Pinang"],
+        // KELANTAN
+        "15000":["Kota Bharu","Kelantan"],"15050":["Kota Bharu","Kelantan"],
+        "15100":["Kota Bharu","Kelantan"],"15150":["Kota Bharu","Kelantan"],
+        "15200":["Kota Bharu","Kelantan"],"15300":["Kota Bharu","Kelantan"],
+        "15350":["Kota Bharu","Kelantan"],"15400":["Kota Bharu","Kelantan"],
+        "15500":["Kota Bharu","Kelantan"],"15502":["Kota Bharu","Kelantan"],
+        "15503":["Kota Bharu","Kelantan"],"15504":["Kota Bharu","Kelantan"],
+        "15505":["Kota Bharu","Kelantan"],"15506":["Kota Bharu","Kelantan"],
+        "15508":["Kota Bharu","Kelantan"],"15512":["Kota Bharu","Kelantan"],
+        "15514":["Kota Bharu","Kelantan"],"15516":["Kota Bharu","Kelantan"],
+        "15518":["Kota Bharu","Kelantan"],"15519":["Kota Bharu","Kelantan"],
+        "15520":["Kota Bharu","Kelantan"],"15522":["Kota Bharu","Kelantan"],
+        "15523":["Kota Bharu","Kelantan"],"15524":["Kota Bharu","Kelantan"],
+        "15532":["Kota Bharu","Kelantan"],"15534":["Kota Bharu","Kelantan"],
+        "15536":["Kota Bharu","Kelantan"],"15538":["Kota Bharu","Kelantan"],
+        "15540":["Kota Bharu","Kelantan"],"15542":["Kota Bharu","Kelantan"],
+        "15544":["Kota Bharu","Kelantan"],"15546":["Kota Bharu","Kelantan"],
+        "15548":["Kota Bharu","Kelantan"],"15550":["Kota Bharu","Kelantan"],
+        "15560":["Kota Bharu","Kelantan"],"15564":["Kota Bharu","Kelantan"],
+        "15570":["Kota Bharu","Kelantan"],"15572":["Kota Bharu","Kelantan"],
+        "15574":["Kota Bharu","Kelantan"],"15576":["Kota Bharu","Kelantan"],
+        "15578":["Kota Bharu","Kelantan"],"15580":["Kota Bharu","Kelantan"],
+        "15582":["Kota Bharu","Kelantan"],"15584":["Kota Bharu","Kelantan"],
+        "15586":["Kota Bharu","Kelantan"],"15590":["Kota Bharu","Kelantan"],
+        "15592":["Kota Bharu","Kelantan"],"15594":["Kota Bharu","Kelantan"],
+        "15596":["Kota Bharu","Kelantan"],"15598":["Kota Bharu","Kelantan"],
+        "16000":["Kota Bharu","Kelantan"],"16010":["Kota Bharu","Kelantan"],
+        "16020":["Bachok","Kelantan"],"16030":["Bachok","Kelantan"],
+        "16050":["Bachok","Kelantan"],"16060":["Bachok","Kelantan"],
+        "16070":["Bachok","Kelantan"],"16080":["Bachok","Kelantan"],
+        "16090":["Bachok","Kelantan"],"16100":["Tumpat","Kelantan"],
+        "16150":["Tumpat","Kelantan"],"16200":["Tumpat","Kelantan"],
+        "16210":["Tumpat","Kelantan"],"16220":["Tumpat","Kelantan"],
+        "16300":["Pengkalan Chepa","Kelantan"],"16310":["Pengkalan Chepa","Kelantan"],
+        "16400":["Pasir Mas","Kelantan"],"16450":["Pasir Mas","Kelantan"],
+        "16500":["Tanah Merah","Kelantan"],"16700":["Pasir Puteh","Kelantan"],
+        "16800":["Pasir Puteh","Kelantan"],"16810":["Pasir Puteh","Kelantan"],
+        "16820":["Pasir Puteh","Kelantan"],"16830":["Pasir Puteh","Kelantan"],
+        "16840":["Pasir Puteh","Kelantan"],"16850":["Pasir Puteh","Kelantan"],
+        "17000":["Tanah Merah","Kelantan"],"17010":["Tanah Merah","Kelantan"],
+        "17020":["Tanah Merah","Kelantan"],"17030":["Tanah Merah","Kelantan"],
+        "17040":["Tanah Merah","Kelantan"],"17050":["Tanah Merah","Kelantan"],
+        "17060":["Tanah Merah","Kelantan"],"17070":["Tanah Merah","Kelantan"],
+        "17500":["Kuala Krai","Kelantan"],"17510":["Kuala Krai","Kelantan"],
+        "17520":["Kuala Krai","Kelantan"],"17530":["Kuala Krai","Kelantan"],
+        "17540":["Kuala Krai","Kelantan"],"17600":["Gua Musang","Kelantan"],
+        "18000":["Kota Bharu","Kelantan"],"18050":["Kota Bharu","Kelantan"],
+        "18100":["Machang","Kelantan"],"18150":["Machang","Kelantan"],
+        "18200":["Machang","Kelantan"],"18300":["Machang","Kelantan"],
+        "18400":["Machang","Kelantan"],"18500":["Machang","Kelantan"],
+        // TERENGGANU
+        "20000":["Kuala Terengganu","Terengganu"],"20050":["Kuala Terengganu","Terengganu"],
+        "20100":["Kuala Terengganu","Terengganu"],"20200":["Kuala Terengganu","Terengganu"],
+        "20300":["Kuala Terengganu","Terengganu"],"20400":["Kuala Terengganu","Terengganu"],
+        "20500":["Kuala Terengganu","Terengganu"],"20514":["Kuala Terengganu","Terengganu"],
+        "21000":["Kuala Terengganu","Terengganu"],"21010":["Kuala Terengganu","Terengganu"],
+        "21020":["Kuala Terengganu","Terengganu"],"21030":["Kuala Terengganu","Terengganu"],
+        "21060":["Kuala Terengganu","Terengganu"],"21070":["Kuala Terengganu","Terengganu"],
+        "21080":["Kuala Terengganu","Terengganu"],"21090":["Kuala Terengganu","Terengganu"],
+        "21100":["Marang","Terengganu"],"21200":["Marang","Terengganu"],
+        "21300":["Marang","Terengganu"],"21400":["Marang","Terengganu"],
+        "21500":["Marang","Terengganu"],"21600":["Marang","Terengganu"],
+        "21700":["Kuala Berang","Terengganu"],"21800":["Kuala Berang","Terengganu"],
+        "22000":["Besut","Terengganu"],"22100":["Besut","Terengganu"],
+        "22200":["Besut","Terengganu"],"22300":["Besut","Terengganu"],
+        "22400":["Besut","Terengganu"],"23000":["Dungun","Terengganu"],
+        "23100":["Dungun","Terengganu"],"23200":["Dungun","Terengganu"],
+        "23300":["Dungun","Terengganu"],"23400":["Dungun","Terengganu"],
+        "23500":["Dungun","Terengganu"],"24000":["Kemaman","Terengganu"],
+        "24100":["Kemaman","Terengganu"],"24200":["Kemaman","Terengganu"],
+        "24300":["Kemaman","Terengganu"],"24400":["Kemaman","Terengganu"],
+        // PERAK
+        "30000":["Ipoh","Perak"],"30010":["Ipoh","Perak"],"30020":["Ipoh","Perak"],
+        "30100":["Ipoh","Perak"],"30200":["Ipoh","Perak"],"30250":["Ipoh","Perak"],
+        "30300":["Ipoh","Perak"],"30350":["Ipoh","Perak"],"30400":["Ipoh","Perak"],
+        "30450":["Ipoh","Perak"],"30500":["Ipoh","Perak"],"30502":["Ipoh","Perak"],
+        "30503":["Ipoh","Perak"],"30504":["Ipoh","Perak"],"30505":["Ipoh","Perak"],
+        "30506":["Ipoh","Perak"],"30508":["Ipoh","Perak"],"30510":["Ipoh","Perak"],
+        "30512":["Ipoh","Perak"],"30514":["Ipoh","Perak"],"30516":["Ipoh","Perak"],
+        "30517":["Ipoh","Perak"],"30518":["Ipoh","Perak"],"30519":["Ipoh","Perak"],
+        "30520":["Ipoh","Perak"],"30524":["Ipoh","Perak"],"30526":["Ipoh","Perak"],
+        "30534":["Ipoh","Perak"],"30536":["Ipoh","Perak"],"30540":["Ipoh","Perak"],
+        "30542":["Ipoh","Perak"],"30544":["Ipoh","Perak"],"30546":["Ipoh","Perak"],
+        "30548":["Ipoh","Perak"],"30550":["Ipoh","Perak"],"30560":["Ipoh","Perak"],
+        "30570":["Ipoh","Perak"],"30580":["Ipoh","Perak"],"30590":["Ipoh","Perak"],
+        "30600":["Ipoh","Perak"],"30610":["Ipoh","Perak"],"30620":["Ipoh","Perak"],
+        "30630":["Ipoh","Perak"],"30640":["Ipoh","Perak"],"30660":["Ipoh","Perak"],
+        "30670":["Ipoh","Perak"],"30700":["Ipoh","Perak"],"30720":["Ipoh","Perak"],
+        "30730":["Ipoh","Perak"],"30740":["Ipoh","Perak"],"30750":["Ipoh","Perak"],
+        "30760":["Ipoh","Perak"],"30770":["Ipoh","Perak"],"30780":["Ipoh","Perak"],
+        "30790":["Ipoh","Perak"],"30800":["Ipoh","Perak"],"30810":["Ipoh","Perak"],
+        "30820":["Ipoh","Perak"],"30900":["Ipoh","Perak"],"30910":["Ipoh","Perak"],
+        "30920":["Ipoh","Perak"],"30950":["Ipoh","Perak"],"31000":["Batu Gajah","Perak"],
+        "31400":["Taiping","Perak"],"31450":["Taiping","Perak"],"31500":["Taiping","Perak"],
+        "31900":["Kampar","Perak"],"32000":["Sitiawan","Perak"],"32600":["Lumut","Perak"],
+        "33000":["Kuala Kangsar","Perak"],"34000":["Teluk Intan","Perak"],
+        "35000":["Tapah","Perak"],"36000":["Teluk Intan","Perak"],
+        // WP KUALA LUMPUR
+        "50000":["Kuala Lumpur","WP Kuala Lumpur"],"50050":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50100":["Kuala Lumpur","WP Kuala Lumpur"],"50150":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50200":["Kuala Lumpur","WP Kuala Lumpur"],"50250":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50300":["Kuala Lumpur","WP Kuala Lumpur"],"50350":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50400":["Kuala Lumpur","WP Kuala Lumpur"],"50450":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50460":["Kuala Lumpur","WP Kuala Lumpur"],"50470":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50480":["Kuala Lumpur","WP Kuala Lumpur"],"50490":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50500":["Kuala Lumpur","WP Kuala Lumpur"],"50502":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50503":["Kuala Lumpur","WP Kuala Lumpur"],"50504":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50505":["Kuala Lumpur","WP Kuala Lumpur"],"50506":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50508":["Kuala Lumpur","WP Kuala Lumpur"],"50512":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50514":["Kuala Lumpur","WP Kuala Lumpur"],"50516":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50518":["Kuala Lumpur","WP Kuala Lumpur"],"50519":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50520":["Kuala Lumpur","WP Kuala Lumpur"],"50522":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50524":["Kuala Lumpur","WP Kuala Lumpur"],"50532":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50534":["Kuala Lumpur","WP Kuala Lumpur"],"50536":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50538":["Kuala Lumpur","WP Kuala Lumpur"],"50540":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50542":["Kuala Lumpur","WP Kuala Lumpur"],"50544":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50546":["Kuala Lumpur","WP Kuala Lumpur"],"50548":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50550":["Kuala Lumpur","WP Kuala Lumpur"],"50551":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50552":["Kuala Lumpur","WP Kuala Lumpur"],"50554":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50556":["Kuala Lumpur","WP Kuala Lumpur"],"50558":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50560":["Kuala Lumpur","WP Kuala Lumpur"],"50562":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50564":["Kuala Lumpur","WP Kuala Lumpur"],"50566":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50568":["Kuala Lumpur","WP Kuala Lumpur"],"50570":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50572":["Kuala Lumpur","WP Kuala Lumpur"],"50574":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50576":["Kuala Lumpur","WP Kuala Lumpur"],"50578":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50580":["Kuala Lumpur","WP Kuala Lumpur"],"50582":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50584":["Kuala Lumpur","WP Kuala Lumpur"],"50586":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50588":["Kuala Lumpur","WP Kuala Lumpur"],"50590":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50592":["Kuala Lumpur","WP Kuala Lumpur"],"50594":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50596":["Kuala Lumpur","WP Kuala Lumpur"],"50598":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50600":["Kuala Lumpur","WP Kuala Lumpur"],"50603":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50604":["Kuala Lumpur","WP Kuala Lumpur"],"50608":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50609":["Kuala Lumpur","WP Kuala Lumpur"],"50610":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50612":["Kuala Lumpur","WP Kuala Lumpur"],"50614":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50616":["Kuala Lumpur","WP Kuala Lumpur"],"50620":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50621":["Kuala Lumpur","WP Kuala Lumpur"],"50622":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50623":["Kuala Lumpur","WP Kuala Lumpur"],"50626":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50628":["Kuala Lumpur","WP Kuala Lumpur"],"50630":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50632":["Kuala Lumpur","WP Kuala Lumpur"],"50634":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50636":["Kuala Lumpur","WP Kuala Lumpur"],"50638":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50640":["Kuala Lumpur","WP Kuala Lumpur"],"50642":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50644":["Kuala Lumpur","WP Kuala Lumpur"],"50646":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50648":["Kuala Lumpur","WP Kuala Lumpur"],"50650":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50652":["Kuala Lumpur","WP Kuala Lumpur"],"50654":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50656":["Kuala Lumpur","WP Kuala Lumpur"],"50658":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50660":["Kuala Lumpur","WP Kuala Lumpur"],"50662":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50664":["Kuala Lumpur","WP Kuala Lumpur"],"50666":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50668":["Kuala Lumpur","WP Kuala Lumpur"],"50670":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50672":["Kuala Lumpur","WP Kuala Lumpur"],"50674":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50676":["Kuala Lumpur","WP Kuala Lumpur"],"50678":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50680":["Kuala Lumpur","WP Kuala Lumpur"],"50682":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50684":["Kuala Lumpur","WP Kuala Lumpur"],"50686":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50688":["Kuala Lumpur","WP Kuala Lumpur"],"50690":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50692":["Kuala Lumpur","WP Kuala Lumpur"],"50694":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50696":["Kuala Lumpur","WP Kuala Lumpur"],"50698":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50700":["Kuala Lumpur","WP Kuala Lumpur"],"50710":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50720":["Kuala Lumpur","WP Kuala Lumpur"],"50730":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50740":["Kuala Lumpur","WP Kuala Lumpur"],"50750":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50760":["Kuala Lumpur","WP Kuala Lumpur"],"50770":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50780":["Kuala Lumpur","WP Kuala Lumpur"],"50790":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50800":["Kuala Lumpur","WP Kuala Lumpur"],"50810":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50820":["Kuala Lumpur","WP Kuala Lumpur"],"50830":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50840":["Kuala Lumpur","WP Kuala Lumpur"],"50850":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50860":["Kuala Lumpur","WP Kuala Lumpur"],"50870":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50880":["Kuala Lumpur","WP Kuala Lumpur"],"50890":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50900":["Kuala Lumpur","WP Kuala Lumpur"],"50910":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50920":["Kuala Lumpur","WP Kuala Lumpur"],"50930":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50940":["Kuala Lumpur","WP Kuala Lumpur"],"50950":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50960":["Kuala Lumpur","WP Kuala Lumpur"],"50970":["Kuala Lumpur","WP Kuala Lumpur"],
+        "50980":["Kuala Lumpur","WP Kuala Lumpur"],"50990":["Kuala Lumpur","WP Kuala Lumpur"],
+        "51000":["Setapak","WP Kuala Lumpur"],"51100":["Setapak","WP Kuala Lumpur"],
+        "51200":["Setapak","WP Kuala Lumpur"],"51300":["Setapak","WP Kuala Lumpur"],
+        "51400":["Setapak","WP Kuala Lumpur"],"51500":["Setapak","WP Kuala Lumpur"],
+        "51600":["Setapak","WP Kuala Lumpur"],"51700":["Setapak","WP Kuala Lumpur"],
+        "51800":["Setapak","WP Kuala Lumpur"],"51900":["Setapak","WP Kuala Lumpur"],
+        "52000":["Kepong","WP Kuala Lumpur"],"52100":["Kepong","WP Kuala Lumpur"],
+        "52200":["Kepong","WP Kuala Lumpur"],"53000":["Kuala Lumpur","WP Kuala Lumpur"],
+        "53100":["Setapak","WP Kuala Lumpur"],"53200":["Setapak","WP Kuala Lumpur"],
+        "53300":["Setapak","WP Kuala Lumpur"],"54000":["Kuala Lumpur","WP Kuala Lumpur"],
+        "54100":["Kuala Lumpur","WP Kuala Lumpur"],"54200":["Kuala Lumpur","WP Kuala Lumpur"],
+        "55000":["Chow Kit","WP Kuala Lumpur"],"55100":["Chow Kit","WP Kuala Lumpur"],
+        "55200":["Chow Kit","WP Kuala Lumpur"],"55300":["Chow Kit","WP Kuala Lumpur"],
+        "56000":["Cheras","WP Kuala Lumpur"],"56100":["Cheras","WP Kuala Lumpur"],
+        "57000":["Cheras","WP Kuala Lumpur"],"57100":["Cheras","WP Kuala Lumpur"],
+        "58000":["Kuala Lumpur","WP Kuala Lumpur"],"58100":["Kuala Lumpur","WP Kuala Lumpur"],
+        "58200":["Kuala Lumpur","WP Kuala Lumpur"],"59000":["Bangsar","WP Kuala Lumpur"],
+        "59100":["Bangsar","WP Kuala Lumpur"],"59200":["Bangsar","WP Kuala Lumpur"],
+        "60000":["Kuala Lumpur","WP Kuala Lumpur"],"60100":["Kuala Lumpur","WP Kuala Lumpur"],
+        "60200":["Kuala Lumpur","WP Kuala Lumpur"],"60300":["Kuala Lumpur","WP Kuala Lumpur"],
+        "60400":["Kuala Lumpur","WP Kuala Lumpur"],"60500":["Kuala Lumpur","WP Kuala Lumpur"],
+        "60600":["Kuala Lumpur","WP Kuala Lumpur"],"60700":["Kuala Lumpur","WP Kuala Lumpur"],
+        "60800":["Kuala Lumpur","WP Kuala Lumpur"],"60900":["Kuala Lumpur","WP Kuala Lumpur"],
+        // WP PUTRAJAYA
+        "62000":["Putrajaya","WP Putrajaya"],"62050":["Putrajaya","WP Putrajaya"],
+        "62100":["Putrajaya","WP Putrajaya"],"62150":["Putrajaya","WP Putrajaya"],
+        "62200":["Putrajaya","WP Putrajaya"],"62250":["Putrajaya","WP Putrajaya"],
+        "62300":["Putrajaya","WP Putrajaya"],"62350":["Putrajaya","WP Putrajaya"],
+        "62400":["Putrajaya","WP Putrajaya"],"62450":["Putrajaya","WP Putrajaya"],
+        "62500":["Putrajaya","WP Putrajaya"],"62502":["Putrajaya","WP Putrajaya"],
+        "62504":["Putrajaya","WP Putrajaya"],"62505":["Putrajaya","WP Putrajaya"],
+        "62506":["Putrajaya","WP Putrajaya"],"62508":["Putrajaya","WP Putrajaya"],
+        "62510":["Putrajaya","WP Putrajaya"],"62512":["Putrajaya","WP Putrajaya"],
+        "62514":["Putrajaya","WP Putrajaya"],"62516":["Putrajaya","WP Putrajaya"],
+        "62517":["Putrajaya","WP Putrajaya"],"62518":["Putrajaya","WP Putrajaya"],
+        "62519":["Putrajaya","WP Putrajaya"],"62520":["Putrajaya","WP Putrajaya"],
+        "62524":["Putrajaya","WP Putrajaya"],"62526":["Putrajaya","WP Putrajaya"],
+        "62550":["Putrajaya","WP Putrajaya"],"62570":["Putrajaya","WP Putrajaya"],
+        "62574":["Putrajaya","WP Putrajaya"],"62576":["Putrajaya","WP Putrajaya"],
+        "62578":["Putrajaya","WP Putrajaya"],"62580":["Putrajaya","WP Putrajaya"],
+        "62582":["Putrajaya","WP Putrajaya"],"62584":["Putrajaya","WP Putrajaya"],
+        "62586":["Putrajaya","WP Putrajaya"],"62588":["Putrajaya","WP Putrajaya"],
+        "62590":["Putrajaya","WP Putrajaya"],"62592":["Putrajaya","WP Putrajaya"],
+        "62594":["Putrajaya","WP Putrajaya"],"62596":["Putrajaya","WP Putrajaya"],
+        "62598":["Putrajaya","WP Putrajaya"],"62600":["Putrajaya","WP Putrajaya"],
+        "62604":["Putrajaya","WP Putrajaya"],"62606":["Putrajaya","WP Putrajaya"],
+        "62610":["Putrajaya","WP Putrajaya"],"62620":["Putrajaya","WP Putrajaya"],
+        // WP LABUAN
+        "87000":["Labuan","WP Labuan"],"87007":["Labuan","WP Labuan"],
+        "87008":["Labuan","WP Labuan"],"87009":["Labuan","WP Labuan"],
+        "87010":["Labuan","WP Labuan"],"87011":["Labuan","WP Labuan"],
+        "87012":["Labuan","WP Labuan"],"87013":["Labuan","WP Labuan"],
+        "87014":["Labuan","WP Labuan"],"87015":["Labuan","WP Labuan"],
+        "87016":["Labuan","WP Labuan"],"87017":["Labuan","WP Labuan"],
+        "87018":["Labuan","WP Labuan"],"87019":["Labuan","WP Labuan"],
+        "87020":["Labuan","WP Labuan"],"87021":["Labuan","WP Labuan"],
+        "87022":["Labuan","WP Labuan"],"87023":["Labuan","WP Labuan"],
+        "87024":["Labuan","WP Labuan"],"87025":["Labuan","WP Labuan"],
+        "87026":["Labuan","WP Labuan"],"87027":["Labuan","WP Labuan"],
+        "87028":["Labuan","WP Labuan"],"87029":["Labuan","WP Labuan"],
+        "87030":["Labuan","WP Labuan"],"87031":["Labuan","WP Labuan"],
+        "87032":["Labuan","WP Labuan"],"87033":["Labuan","WP Labuan"],
+        // SELANGOR
+        "40000":["Shah Alam","Selangor"],"40100":["Shah Alam","Selangor"],
+        "40150":["Shah Alam","Selangor"],"40160":["Shah Alam","Selangor"],
+        "40170":["Shah Alam","Selangor"],"40200":["Shah Alam","Selangor"],
+        "40300":["Shah Alam","Selangor"],"40400":["Shah Alam","Selangor"],
+        "40450":["Shah Alam","Selangor"],"40460":["Shah Alam","Selangor"],
+        "40470":["Shah Alam","Selangor"],"40480":["Shah Alam","Selangor"],
+        "40490":["Shah Alam","Selangor"],"40500":["Shah Alam","Selangor"],
+        "40502":["Shah Alam","Selangor"],"40503":["Shah Alam","Selangor"],
+        "40510":["Shah Alam","Selangor"],"40512":["Shah Alam","Selangor"],
+        "40514":["Shah Alam","Selangor"],"40516":["Shah Alam","Selangor"],
+        "40517":["Shah Alam","Selangor"],"40518":["Shah Alam","Selangor"],
+        "40520":["Shah Alam","Selangor"],"40522":["Shah Alam","Selangor"],
+        "40524":["Shah Alam","Selangor"],"40526":["Shah Alam","Selangor"],
+        "40534":["Shah Alam","Selangor"],"40536":["Shah Alam","Selangor"],
+        "40538":["Shah Alam","Selangor"],"40540":["Shah Alam","Selangor"],
+        "40542":["Shah Alam","Selangor"],"40544":["Shah Alam","Selangor"],
+        "40546":["Shah Alam","Selangor"],"40548":["Shah Alam","Selangor"],
+        "40550":["Shah Alam","Selangor"],"40551":["Shah Alam","Selangor"],
+        "40560":["Shah Alam","Selangor"],"40562":["Shah Alam","Selangor"],
+        "40564":["Shah Alam","Selangor"],"40570":["Shah Alam","Selangor"],
+        "40572":["Shah Alam","Selangor"],"40574":["Shah Alam","Selangor"],
+        "40576":["Shah Alam","Selangor"],"40578":["Shah Alam","Selangor"],
+        "40580":["Shah Alam","Selangor"],"40582":["Shah Alam","Selangor"],
+        "40584":["Shah Alam","Selangor"],"40586":["Shah Alam","Selangor"],
+        "40588":["Shah Alam","Selangor"],"40590":["Shah Alam","Selangor"],
+        "40592":["Shah Alam","Selangor"],"40594":["Shah Alam","Selangor"],
+        "40596":["Shah Alam","Selangor"],"40598":["Shah Alam","Selangor"],
+        "40600":["Shah Alam","Selangor"],"40604":["Shah Alam","Selangor"],
+        "40608":["Shah Alam","Selangor"],"40609":["Shah Alam","Selangor"],
+        "40610":["Shah Alam","Selangor"],"40620":["Shah Alam","Selangor"],
+        "40621":["Shah Alam","Selangor"],"40622":["Shah Alam","Selangor"],
+        "40626":["Shah Alam","Selangor"],"40628":["Shah Alam","Selangor"],
+        "40630":["Shah Alam","Selangor"],"40632":["Shah Alam","Selangor"],
+        "40634":["Shah Alam","Selangor"],"40638":["Shah Alam","Selangor"],
+        "40640":["Shah Alam","Selangor"],"40646":["Shah Alam","Selangor"],
+        "40648":["Shah Alam","Selangor"],"40650":["Shah Alam","Selangor"],
+        "40652":["Shah Alam","Selangor"],"40660":["Shah Alam","Selangor"],
+        "40662":["Shah Alam","Selangor"],"40664":["Shah Alam","Selangor"],
+        "40670":["Shah Alam","Selangor"],"40672":["Shah Alam","Selangor"],
+        "40674":["Shah Alam","Selangor"],"40676":["Shah Alam","Selangor"],
+        "40678":["Shah Alam","Selangor"],"40680":["Shah Alam","Selangor"],
+        "40682":["Shah Alam","Selangor"],"40700":["Shah Alam","Selangor"],
+        "40710":["Shah Alam","Selangor"],"40720":["Shah Alam","Selangor"],
+        "40730":["Shah Alam","Selangor"],"40740":["Shah Alam","Selangor"],
+        "40750":["Shah Alam","Selangor"],"40760":["Shah Alam","Selangor"],
+        "40770":["Shah Alam","Selangor"],"40780":["Shah Alam","Selangor"],
+        "40790":["Shah Alam","Selangor"],"40800":["Shah Alam","Selangor"],
+        "40810":["Shah Alam","Selangor"],"40820":["Shah Alam","Selangor"],
+        "40900":["Shah Alam","Selangor"],"40910":["Shah Alam","Selangor"],
+        "40920":["Shah Alam","Selangor"],"40950":["Shah Alam","Selangor"],
+        "40960":["Shah Alam","Selangor"],"40970":["Shah Alam","Selangor"],
+        "40990":["Shah Alam","Selangor"],
+        "41000":["Klang","Selangor"],"41100":["Klang","Selangor"],"41150":["Klang","Selangor"],
+        "41200":["Klang","Selangor"],"41250":["Klang","Selangor"],"41300":["Klang","Selangor"],
+        "41400":["Klang","Selangor"],"41500":["Klang","Selangor"],"41506":["Klang","Selangor"],
+        "41510":["Klang","Selangor"],"41512":["Klang","Selangor"],"41516":["Klang","Selangor"],
+        "41518":["Klang","Selangor"],"41528":["Klang","Selangor"],"41530":["Klang","Selangor"],
+        "41532":["Klang","Selangor"],"41534":["Klang","Selangor"],"41536":["Klang","Selangor"],
+        "41538":["Klang","Selangor"],"41540":["Klang","Selangor"],"41542":["Klang","Selangor"],
+        "41544":["Klang","Selangor"],"41546":["Klang","Selangor"],"41548":["Klang","Selangor"],
+        "41550":["Klang","Selangor"],"41560":["Klang","Selangor"],"41562":["Klang","Selangor"],
+        "41564":["Klang","Selangor"],"41570":["Klang","Selangor"],"41572":["Klang","Selangor"],
+        "41574":["Klang","Selangor"],"41576":["Klang","Selangor"],"41578":["Klang","Selangor"],
+        "41580":["Klang","Selangor"],"41582":["Klang","Selangor"],"41584":["Klang","Selangor"],
+        "41586":["Klang","Selangor"],"41588":["Klang","Selangor"],"41590":["Klang","Selangor"],
+        "41592":["Klang","Selangor"],"41594":["Klang","Selangor"],"41596":["Klang","Selangor"],
+        "41598":["Klang","Selangor"],"41600":["Klang","Selangor"],"41604":["Klang","Selangor"],
+        "41608":["Klang","Selangor"],"41609":["Klang","Selangor"],"41610":["Klang","Selangor"],
+        "41620":["Klang","Selangor"],"41622":["Klang","Selangor"],"41626":["Klang","Selangor"],
+        "41628":["Klang","Selangor"],"41630":["Klang","Selangor"],"41632":["Klang","Selangor"],
+        "41634":["Klang","Selangor"],"41700":["Klang","Selangor"],"41710":["Klang","Selangor"],
+        "41720":["Klang","Selangor"],"41730":["Klang","Selangor"],"41740":["Klang","Selangor"],
+        "41750":["Klang","Selangor"],"41760":["Klang","Selangor"],"41770":["Klang","Selangor"],
+        "41780":["Klang","Selangor"],"41800":["Klang","Selangor"],"41810":["Klang","Selangor"],
+        "41820":["Klang","Selangor"],"41830":["Klang","Selangor"],"41840":["Klang","Selangor"],
+        "41850":["Klang","Selangor"],"41900":["Klang","Selangor"],"41910":["Klang","Selangor"],
+        "41920":["Klang","Selangor"],"41950":["Klang","Selangor"],"41960":["Klang","Selangor"],
+        "42000":["Port Klang","Selangor"],"42100":["Klang","Selangor"],
+        "42300":["Banting","Selangor"],"42400":["Banting","Selangor"],
+        "42500":["Telok Panglima Garang","Selangor"],"42600":["Jenjarom","Selangor"],
+        "42700":["Banting","Selangor"],"42800":["Banting","Selangor"],
+        "43000":["Kajang","Selangor"],"43100":["Kajang","Selangor"],
+        "43200":["Cheras","Selangor"],"43300":["Balakong","Selangor"],
+        "43400":["Seri Kembangan","Selangor"],"43500":["Semenyih","Selangor"],
+        "43600":["Semenyih","Selangor"],"43650":["Bangi","Selangor"],
+        "43700":["Beranang","Selangor"],"43800":["Dengkil","Selangor"],
+        "43900":["Sepang","Selangor"],"44000":["Kuala Kubu Bharu","Selangor"],
+        "44100":["Kerling","Selangor"],"44200":["Tanjong Malim","Selangor"],
+        "44300":["Batang Kali","Selangor"],"44400":["Rawang","Selangor"],
+        "45000":["Kuala Selangor","Selangor"],"45100":["Sabak Bernam","Selangor"],
+        "45200":["Sabak Bernam","Selangor"],"45300":["Sungai Besar","Selangor"],
+        "45400":["Sungai Besar","Selangor"],"45500":["Tanjong Karang","Selangor"],
+        "45600":["Sekinchan","Selangor"],"45700":["Sungai Besar","Selangor"],
+        "45800":["Sungai Besar","Selangor"],"46000":["Petaling Jaya","Selangor"],
+        "46050":["Petaling Jaya","Selangor"],"46100":["Petaling Jaya","Selangor"],
+        "46150":["Petaling Jaya","Selangor"],"46200":["Petaling Jaya","Selangor"],
+        "46300":["Petaling Jaya","Selangor"],"46350":["Petaling Jaya","Selangor"],
+        "46400":["Petaling Jaya","Selangor"],"46450":["Petaling Jaya","Selangor"],
+        "46500":["Petaling Jaya","Selangor"],"46505":["Petaling Jaya","Selangor"],
+        "46506":["Petaling Jaya","Selangor"],"46507":["Petaling Jaya","Selangor"],
+        "46508":["Petaling Jaya","Selangor"],"46509":["Petaling Jaya","Selangor"],
+        "46510":["Petaling Jaya","Selangor"],"46512":["Petaling Jaya","Selangor"],
+        "46514":["Petaling Jaya","Selangor"],"46516":["Petaling Jaya","Selangor"],
+        "46517":["Petaling Jaya","Selangor"],"46518":["Petaling Jaya","Selangor"],
+        "46519":["Petaling Jaya","Selangor"],"46520":["Petaling Jaya","Selangor"],
+        "46522":["Petaling Jaya","Selangor"],"46524":["Petaling Jaya","Selangor"],
+        "46534":["Petaling Jaya","Selangor"],"46536":["Petaling Jaya","Selangor"],
+        "46538":["Petaling Jaya","Selangor"],"46540":["Petaling Jaya","Selangor"],
+        "46542":["Petaling Jaya","Selangor"],"46544":["Petaling Jaya","Selangor"],
+        "46546":["Petaling Jaya","Selangor"],"46548":["Petaling Jaya","Selangor"],
+        "46550":["Petaling Jaya","Selangor"],"46560":["Petaling Jaya","Selangor"],
+        "46570":["Petaling Jaya","Selangor"],"46580":["Petaling Jaya","Selangor"],
+        "46590":["Petaling Jaya","Selangor"],"46600":["Petaling Jaya","Selangor"],
+        "46700":["Petaling Jaya","Selangor"],"46710":["Petaling Jaya","Selangor"],
+        "46720":["Petaling Jaya","Selangor"],"46730":["Petaling Jaya","Selangor"],
+        "46740":["Petaling Jaya","Selangor"],"46750":["Petaling Jaya","Selangor"],
+        "46760":["Petaling Jaya","Selangor"],"46770":["Petaling Jaya","Selangor"],
+        "46780":["Petaling Jaya","Selangor"],"46800":["Petaling Jaya","Selangor"],
+        "46810":["Petaling Jaya","Selangor"],"46820":["Petaling Jaya","Selangor"],
+        "46830":["Petaling Jaya","Selangor"],"46840":["Petaling Jaya","Selangor"],
+        "46850":["Petaling Jaya","Selangor"],"46860":["Petaling Jaya","Selangor"],
+        "46870":["Petaling Jaya","Selangor"],"46880":["Petaling Jaya","Selangor"],
+        "46890":["Petaling Jaya","Selangor"],"46900":["Petaling Jaya","Selangor"],
+        "47000":["Subang Jaya","Selangor"],"47100":["Subang Jaya","Selangor"],
+        "47150":["Subang Jaya","Selangor"],"47200":["Subang Jaya","Selangor"],
+        "47300":["Subang Jaya","Selangor"],"47301":["Subang Jaya","Selangor"],
+        "47400":["Subang Jaya","Selangor"],"47500":["Subang Jaya","Selangor"],
+        "47600":["Subang Jaya","Selangor"],"47610":["Subang Jaya","Selangor"],
+        "47620":["Subang Jaya","Selangor"],"47630":["Subang Jaya","Selangor"],
+        "47640":["Subang Jaya","Selangor"],"47650":["Subang Jaya","Selangor"],
+        "47800":["Petaling Jaya","Selangor"],"47810":["Petaling Jaya","Selangor"],
+        "47820":["Petaling Jaya","Selangor"],"47830":["Petaling Jaya","Selangor"],
+        "47840":["Petaling Jaya","Selangor"],"47850":["Petaling Jaya","Selangor"],
+        "47860":["Petaling Jaya","Selangor"],"47870":["Petaling Jaya","Selangor"],
+        "47880":["Petaling Jaya","Selangor"],"47890":["Petaling Jaya","Selangor"],
+        "47900":["Petaling Jaya","Selangor"],"47910":["Petaling Jaya","Selangor"],
+        "48000":["Rawang","Selangor"],"48010":["Rawang","Selangor"],
+        "48020":["Rawang","Selangor"],"48050":["Rawang","Selangor"],
+        // NEGERI SEMBILAN
+        "70000":["Seremban","Negeri Sembilan"],"70100":["Seremban","Negeri Sembilan"],
+        "70200":["Seremban","Negeri Sembilan"],"70300":["Seremban","Negeri Sembilan"],
+        "70400":["Seremban","Negeri Sembilan"],"70450":["Seremban","Negeri Sembilan"],
+        "70500":["Seremban","Negeri Sembilan"],"70502":["Seremban","Negeri Sembilan"],
+        "70503":["Seremban","Negeri Sembilan"],"70504":["Seremban","Negeri Sembilan"],
+        "70505":["Seremban","Negeri Sembilan"],"70506":["Seremban","Negeri Sembilan"],
+        "70508":["Seremban","Negeri Sembilan"],"70510":["Seremban","Negeri Sembilan"],
+        "70512":["Seremban","Negeri Sembilan"],"70514":["Seremban","Negeri Sembilan"],
+        "70516":["Seremban","Negeri Sembilan"],"70517":["Seremban","Negeri Sembilan"],
+        "70518":["Seremban","Negeri Sembilan"],"70519":["Seremban","Negeri Sembilan"],
+        "70520":["Seremban","Negeri Sembilan"],"70522":["Seremban","Negeri Sembilan"],
+        "70524":["Seremban","Negeri Sembilan"],"70532":["Seremban","Negeri Sembilan"],
+        "70534":["Seremban","Negeri Sembilan"],"70536":["Seremban","Negeri Sembilan"],
+        "70538":["Seremban","Negeri Sembilan"],"70540":["Seremban","Negeri Sembilan"],
+        "70542":["Seremban","Negeri Sembilan"],"70544":["Seremban","Negeri Sembilan"],
+        "70546":["Seremban","Negeri Sembilan"],"70548":["Seremban","Negeri Sembilan"],
+        "70550":["Seremban","Negeri Sembilan"],"70560":["Seremban","Negeri Sembilan"],
+        "70570":["Seremban","Negeri Sembilan"],"70580":["Seremban","Negeri Sembilan"],
+        "70590":["Seremban","Negeri Sembilan"],"70600":["Seremban","Negeri Sembilan"],
+        "70700":["Seremban","Negeri Sembilan"],"70710":["Seremban","Negeri Sembilan"],
+        "70720":["Seremban","Negeri Sembilan"],"70800":["Seremban","Negeri Sembilan"],
+        "71000":["Port Dickson","Negeri Sembilan"],"71100":["Port Dickson","Negeri Sembilan"],
+        "71200":["Port Dickson","Negeri Sembilan"],"71300":["Rembau","Negeri Sembilan"],
+        "71400":["Rembau","Negeri Sembilan"],"71450":["Rembau","Negeri Sembilan"],
+        "71500":["Kuala Pilah","Negeri Sembilan"],"71600":["Kuala Pilah","Negeri Sembilan"],
+        "71700":["Kuala Pilah","Negeri Sembilan"],"71800":["Nilai","Negeri Sembilan"],
+        "71900":["Nilai","Negeri Sembilan"],"72000":["Kuala Pilah","Negeri Sembilan"],
+        "72100":["Kuala Pilah","Negeri Sembilan"],"72200":["Bahau","Negeri Sembilan"],
+        "72300":["Bahau","Negeri Sembilan"],"72400":["Bahau","Negeri Sembilan"],
+        "72500":["Bahau","Negeri Sembilan"],"73000":["Tampin","Negeri Sembilan"],
+        "73100":["Tampin","Negeri Sembilan"],"73200":["Tampin","Negeri Sembilan"],
+        "73300":["Tampin","Negeri Sembilan"],"73400":["Tampin","Negeri Sembilan"],
+        "73500":["Gemas","Negeri Sembilan"],
+        // MELAKA
+        "75000":["Melaka","Melaka"],"75050":["Melaka","Melaka"],
+        "75100":["Melaka","Melaka"],"75150":["Melaka","Melaka"],
+        "75200":["Melaka","Melaka"],"75250":["Melaka","Melaka"],
+        "75300":["Melaka","Melaka"],"75350":["Melaka","Melaka"],
+        "75400":["Melaka","Melaka"],"75450":["Melaka","Melaka"],
+        "75460":["Melaka","Melaka"],"75500":["Melaka","Melaka"],
+        "75502":["Melaka","Melaka"],"75503":["Melaka","Melaka"],
+        "75504":["Melaka","Melaka"],"75505":["Melaka","Melaka"],
+        "75506":["Melaka","Melaka"],"75508":["Melaka","Melaka"],
+        "75510":["Melaka","Melaka"],"75512":["Melaka","Melaka"],
+        "75514":["Melaka","Melaka"],"75516":["Melaka","Melaka"],
+        "75517":["Melaka","Melaka"],"75518":["Melaka","Melaka"],
+        "75519":["Melaka","Melaka"],"75520":["Melaka","Melaka"],
+        "75522":["Melaka","Melaka"],"75524":["Melaka","Melaka"],
+        "75532":["Melaka","Melaka"],"75534":["Melaka","Melaka"],
+        "75536":["Melaka","Melaka"],"75538":["Melaka","Melaka"],
+        "75540":["Melaka","Melaka"],"75542":["Melaka","Melaka"],
+        "75544":["Melaka","Melaka"],"75546":["Melaka","Melaka"],
+        "75548":["Melaka","Melaka"],"75550":["Melaka","Melaka"],
+        "75560":["Melaka","Melaka"],"75570":["Melaka","Melaka"],
+        "75580":["Melaka","Melaka"],"75590":["Melaka","Melaka"],
+        "75600":["Melaka","Melaka"],"75604":["Melaka","Melaka"],
+        "75608":["Melaka","Melaka"],"75609":["Melaka","Melaka"],
+        "75610":["Melaka","Melaka"],"75620":["Melaka","Melaka"],
+        "75626":["Melaka","Melaka"],"75628":["Melaka","Melaka"],
+        "75630":["Melaka","Melaka"],"75632":["Melaka","Melaka"],
+        "75634":["Melaka","Melaka"],"75700":["Melaka","Melaka"],
+        "75710":["Melaka","Melaka"],"75720":["Melaka","Melaka"],
+        "75730":["Melaka","Melaka"],"75740":["Melaka","Melaka"],
+        "75750":["Melaka","Melaka"],"75760":["Melaka","Melaka"],
+        "75800":["Melaka","Melaka"],"75810":["Melaka","Melaka"],
+        "75820":["Melaka","Melaka"],"75830":["Melaka","Melaka"],
+        "75840":["Melaka","Melaka"],"75850":["Melaka","Melaka"],
+        "75860":["Melaka","Melaka"],"75900":["Melaka","Melaka"],
+        "75910":["Melaka","Melaka"],"75920":["Melaka","Melaka"],
+        "75950":["Melaka","Melaka"],"75960":["Melaka","Melaka"],
+        "75970":["Melaka","Melaka"],"75990":["Melaka","Melaka"],
+        "76000":["Melaka","Melaka"],"76100":["Melaka","Melaka"],
+        "76200":["Melaka","Melaka"],"76300":["Melaka","Melaka"],
+        "76400":["Melaka","Melaka"],"76450":["Melaka","Melaka"],
+        "77000":["Alor Gajah","Melaka"],"77100":["Alor Gajah","Melaka"],
+        "77200":["Alor Gajah","Melaka"],"77300":["Alor Gajah","Melaka"],
+        "77400":["Alor Gajah","Melaka"],"77500":["Alor Gajah","Melaka"],
+        "78000":["Alor Gajah","Melaka"],"78100":["Alor Gajah","Melaka"],
+        "78200":["Alor Gajah","Melaka"],"78300":["Alor Gajah","Melaka"],
+        "78400":["Alor Gajah","Melaka"],"78500":["Alor Gajah","Melaka"],
+        // JOHOR
+        "79000":["Iskandar Puteri","Johor"],"79100":["Iskandar Puteri","Johor"],
+        "79150":["Iskandar Puteri","Johor"],"79200":["Iskandar Puteri","Johor"],
+        "79250":["Iskandar Puteri","Johor"],"79300":["Iskandar Puteri","Johor"],
+        "80000":["Johor Bahru","Johor"],"80050":["Johor Bahru","Johor"],
+        "80100":["Johor Bahru","Johor"],"80150":["Johor Bahru","Johor"],
+        "80200":["Johor Bahru","Johor"],"80250":["Johor Bahru","Johor"],
+        "80300":["Johor Bahru","Johor"],"80350":["Johor Bahru","Johor"],
+        "80400":["Johor Bahru","Johor"],"80500":["Johor Bahru","Johor"],
+        "80502":["Johor Bahru","Johor"],"80503":["Johor Bahru","Johor"],
+        "80504":["Johor Bahru","Johor"],"80505":["Johor Bahru","Johor"],
+        "80506":["Johor Bahru","Johor"],"80508":["Johor Bahru","Johor"],
+        "80510":["Johor Bahru","Johor"],"80512":["Johor Bahru","Johor"],
+        "80514":["Johor Bahru","Johor"],"80516":["Johor Bahru","Johor"],
+        "80517":["Johor Bahru","Johor"],"80518":["Johor Bahru","Johor"],
+        "80519":["Johor Bahru","Johor"],"80520":["Johor Bahru","Johor"],
+        "80522":["Johor Bahru","Johor"],"80524":["Johor Bahru","Johor"],
+        "80532":["Johor Bahru","Johor"],"80534":["Johor Bahru","Johor"],
+        "80536":["Johor Bahru","Johor"],"80538":["Johor Bahru","Johor"],
+        "80540":["Johor Bahru","Johor"],"80542":["Johor Bahru","Johor"],
+        "80544":["Johor Bahru","Johor"],"80546":["Johor Bahru","Johor"],
+        "80548":["Johor Bahru","Johor"],"80550":["Johor Bahru","Johor"],
+        "80560":["Johor Bahru","Johor"],"80564":["Johor Bahru","Johor"],
+        "80570":["Johor Bahru","Johor"],"80572":["Johor Bahru","Johor"],
+        "80576":["Johor Bahru","Johor"],"80578":["Johor Bahru","Johor"],
+        "80580":["Johor Bahru","Johor"],"80582":["Johor Bahru","Johor"],
+        "80584":["Johor Bahru","Johor"],"80586":["Johor Bahru","Johor"],
+        "80588":["Johor Bahru","Johor"],"80590":["Johor Bahru","Johor"],
+        "80592":["Johor Bahru","Johor"],"80594":["Johor Bahru","Johor"],
+        "80596":["Johor Bahru","Johor"],"80598":["Johor Bahru","Johor"],
+        "80600":["Johor Bahru","Johor"],"80604":["Johor Bahru","Johor"],
+        "80608":["Johor Bahru","Johor"],"80609":["Johor Bahru","Johor"],
+        "80610":["Johor Bahru","Johor"],"80620":["Johor Bahru","Johor"],
+        "80622":["Johor Bahru","Johor"],"80626":["Johor Bahru","Johor"],
+        "80628":["Johor Bahru","Johor"],"80630":["Johor Bahru","Johor"],
+        "80632":["Johor Bahru","Johor"],"80634":["Johor Bahru","Johor"],
+        "80700":["Johor Bahru","Johor"],"80710":["Johor Bahru","Johor"],
+        "80720":["Johor Bahru","Johor"],"80730":["Johor Bahru","Johor"],
+        "80740":["Johor Bahru","Johor"],"80750":["Johor Bahru","Johor"],
+        "80800":["Johor Bahru","Johor"],"80900":["Johor Bahru","Johor"],
+        "81000":["Johor Bahru","Johor"],"81100":["Johor Bahru","Johor"],
+        "81200":["Johor Bahru","Johor"],"81300":["Skudai","Johor"],
+        "81400":["Senai","Johor"],"81500":["Johor Bahru","Johor"],
+        "81550":["Johor Bahru","Johor"],"81600":["Johor Bahru","Johor"],
+        "81700":["Pasir Gudang","Johor"],"81750":["Pasir Gudang","Johor"],
+        "81800":["Ulu Tiram","Johor"],"81900":["Kota Tinggi","Johor"],
+        "82000":["Pontian","Johor"],"82100":["Pontian","Johor"],
+        "82200":["Pontian","Johor"],"82300":["Pontian","Johor"],
+        "83000":["Batu Pahat","Johor"],"83100":["Batu Pahat","Johor"],
+        "83200":["Batu Pahat","Johor"],"83300":["Batu Pahat","Johor"],
+        "83400":["Batu Pahat","Johor"],"83500":["Batu Pahat","Johor"],
+        "83600":["Batu Pahat","Johor"],"83700":["Batu Pahat","Johor"],
+        "83800":["Batu Pahat","Johor"],"83900":["Batu Pahat","Johor"],
+        "84000":["Muar","Johor"],"84100":["Muar","Johor"],
+        "84200":["Muar","Johor"],"84300":["Muar","Johor"],
+        "84400":["Muar","Johor"],"84500":["Muar","Johor"],
+        "84600":["Muar","Johor"],"84700":["Muar","Johor"],
+        "84800":["Muar","Johor"],"84900":["Muar","Johor"],
+        "85000":["Segamat","Johor"],"85100":["Segamat","Johor"],
+        "85200":["Segamat","Johor"],"85300":["Segamat","Johor"],
+        "85400":["Segamat","Johor"],"85500":["Segamat","Johor"],
+        "85600":["Segamat","Johor"],"85700":["Segamat","Johor"],
+        "85800":["Segamat","Johor"],"85900":["Segamat","Johor"],
+        "86000":["Kluang","Johor"],"86100":["Kluang","Johor"],
+        "86200":["Kluang","Johor"],"86300":["Kluang","Johor"],
+        "86400":["Kluang","Johor"],"86500":["Kluang","Johor"],
+        "86600":["Kluang","Johor"],"86700":["Mersing","Johor"],
+        "86800":["Mersing","Johor"],"86900":["Mersing","Johor"],
+        // PAHANG
+        "25000":["Kuantan","Pahang"],"25050":["Kuantan","Pahang"],
+        "25100":["Kuantan","Pahang"],"25150":["Kuantan","Pahang"],
+        "25200":["Kuantan","Pahang"],"25300":["Kuantan","Pahang"],
+        "25350":["Kuantan","Pahang"],"25400":["Kuantan","Pahang"],
+        "25450":["Kuantan","Pahang"],"25500":["Kuantan","Pahang"],
+        "25502":["Kuantan","Pahang"],"25503":["Kuantan","Pahang"],
+        "25504":["Kuantan","Pahang"],"25505":["Kuantan","Pahang"],
+        "25506":["Kuantan","Pahang"],"25508":["Kuantan","Pahang"],
+        "25510":["Kuantan","Pahang"],"25512":["Kuantan","Pahang"],
+        "25514":["Kuantan","Pahang"],"25516":["Kuantan","Pahang"],
+        "25517":["Kuantan","Pahang"],"25518":["Kuantan","Pahang"],
+        "25519":["Kuantan","Pahang"],"25520":["Kuantan","Pahang"],
+        "25522":["Kuantan","Pahang"],"25524":["Kuantan","Pahang"],
+        "25532":["Kuantan","Pahang"],"25534":["Kuantan","Pahang"],
+        "25536":["Kuantan","Pahang"],"25538":["Kuantan","Pahang"],
+        "25540":["Kuantan","Pahang"],"25542":["Kuantan","Pahang"],
+        "25544":["Kuantan","Pahang"],"25546":["Kuantan","Pahang"],
+        "25548":["Kuantan","Pahang"],"25550":["Kuantan","Pahang"],
+        "25560":["Kuantan","Pahang"],"25570":["Kuantan","Pahang"],
+        "25580":["Kuantan","Pahang"],"25590":["Kuantan","Pahang"],
+        "25600":["Kuantan","Pahang"],"25700":["Kuantan","Pahang"],
+        "25710":["Kuantan","Pahang"],"25720":["Kuantan","Pahang"],
+        "25730":["Kuantan","Pahang"],"25740":["Kuantan","Pahang"],
+        "25750":["Kuantan","Pahang"],"25800":["Kuantan","Pahang"],
+        "25900":["Kuantan","Pahang"],"26000":["Temerloh","Pahang"],
+        "26100":["Temerloh","Pahang"],"26200":["Temerloh","Pahang"],
+        "26300":["Temerloh","Pahang"],"26400":["Temerloh","Pahang"],
+        "26500":["Temerloh","Pahang"],"26600":["Temerloh","Pahang"],
+        "26700":["Bentong","Pahang"],"26800":["Raub","Pahang"],
+        "27000":["Jerantut","Pahang"],"27100":["Jerantut","Pahang"],
+        "27200":["Jerantut","Pahang"],"27300":["Jerantut","Pahang"],
+        "27400":["Jerantut","Pahang"],"27500":["Jerantut","Pahang"],
+        "27600":["Maran","Pahang"],"27700":["Maran","Pahang"],
+        "28000":["Mentakab","Pahang"],"28100":["Mentakab","Pahang"],
+        "28200":["Mentakab","Pahang"],"28300":["Mentakab","Pahang"],
+        "28400":["Mentakab","Pahang"],"28500":["Mentakab","Pahang"],
+        "28600":["Mentakab","Pahang"],"28700":["Mentakab","Pahang"],
+        "28800":["Pekan","Pahang"],"28900":["Pekan","Pahang"],
+        "39000":["Batang Padang","Pahang"],"39100":["Batang Padang","Pahang"],
+        "39200":["Batang Padang","Pahang"],"39300":["Batang Padang","Pahang"],
+        // SABAH
+        "88000":["Kota Kinabalu","Sabah"],"88100":["Kota Kinabalu","Sabah"],
+        "88200":["Kota Kinabalu","Sabah"],"88300":["Kota Kinabalu","Sabah"],
+        "88400":["Kota Kinabalu","Sabah"],"88450":["Kota Kinabalu","Sabah"],
+        "88460":["Kota Kinabalu","Sabah"],"88500":["Kota Kinabalu","Sabah"],
+        "88502":["Kota Kinabalu","Sabah"],"88503":["Kota Kinabalu","Sabah"],
+        "88504":["Kota Kinabalu","Sabah"],"88505":["Kota Kinabalu","Sabah"],
+        "88506":["Kota Kinabalu","Sabah"],"88508":["Kota Kinabalu","Sabah"],
+        "88510":["Kota Kinabalu","Sabah"],"88512":["Kota Kinabalu","Sabah"],
+        "88514":["Kota Kinabalu","Sabah"],"88516":["Kota Kinabalu","Sabah"],
+        "88517":["Kota Kinabalu","Sabah"],"88518":["Kota Kinabalu","Sabah"],
+        "88519":["Kota Kinabalu","Sabah"],"88520":["Kota Kinabalu","Sabah"],
+        "88522":["Kota Kinabalu","Sabah"],"88524":["Kota Kinabalu","Sabah"],
+        "88532":["Kota Kinabalu","Sabah"],"88534":["Kota Kinabalu","Sabah"],
+        "88536":["Kota Kinabalu","Sabah"],"88538":["Kota Kinabalu","Sabah"],
+        "88540":["Kota Kinabalu","Sabah"],"88542":["Kota Kinabalu","Sabah"],
+        "88544":["Kota Kinabalu","Sabah"],"88546":["Kota Kinabalu","Sabah"],
+        "88548":["Kota Kinabalu","Sabah"],"88550":["Kota Kinabalu","Sabah"],
+        "88560":["Kota Kinabalu","Sabah"],"88570":["Kota Kinabalu","Sabah"],
+        "88600":["Kota Kinabalu","Sabah"],"88604":["Kota Kinabalu","Sabah"],
+        "88608":["Kota Kinabalu","Sabah"],"88609":["Kota Kinabalu","Sabah"],
+        "88610":["Kota Kinabalu","Sabah"],"88620":["Kota Kinabalu","Sabah"],
+        "88626":["Kota Kinabalu","Sabah"],"88700":["Kota Kinabalu","Sabah"],
+        "88710":["Kota Kinabalu","Sabah"],"88720":["Kota Kinabalu","Sabah"],
+        "88730":["Kota Kinabalu","Sabah"],"88740":["Kota Kinabalu","Sabah"],
+        "88750":["Kota Kinabalu","Sabah"],"88760":["Kota Kinabalu","Sabah"],
+        "88800":["Kota Kinabalu","Sabah"],"88810":["Kota Kinabalu","Sabah"],
+        "88820":["Kota Kinabalu","Sabah"],"88830":["Kota Kinabalu","Sabah"],
+        "88840":["Kota Kinabalu","Sabah"],"88850":["Kota Kinabalu","Sabah"],
+        "88860":["Kota Kinabalu","Sabah"],"88900":["Kota Kinabalu","Sabah"],
+        "88910":["Kota Kinabalu","Sabah"],"88920":["Kota Kinabalu","Sabah"],
+        "88950":["Kota Kinabalu","Sabah"],"88960":["Kota Kinabalu","Sabah"],
+        "88970":["Kota Kinabalu","Sabah"],"88990":["Kota Kinabalu","Sabah"],
+        "89000":["Tawau","Sabah"],"89100":["Tawau","Sabah"],
+        "89200":["Tawau","Sabah"],"89300":["Tawau","Sabah"],
+        "89400":["Tawau","Sabah"],"89500":["Tawau","Sabah"],
+        "89600":["Tawau","Sabah"],"89700":["Semporna","Sabah"],
+        "89800":["Keningau","Sabah"],"89900":["Keningau","Sabah"],
+        "90000":["Sandakan","Sabah"],"90100":["Sandakan","Sabah"],
+        "90200":["Sandakan","Sabah"],"90300":["Sandakan","Sabah"],
+        "90400":["Sandakan","Sabah"],"90500":["Sandakan","Sabah"],
+        "90503":["Sandakan","Sabah"],"90504":["Sandakan","Sabah"],
+        "90505":["Sandakan","Sabah"],"90506":["Sandakan","Sabah"],
+        "90508":["Sandakan","Sabah"],"90509":["Sandakan","Sabah"],
+        "90510":["Sandakan","Sabah"],"90512":["Sandakan","Sabah"],
+        "90514":["Sandakan","Sabah"],"90516":["Sandakan","Sabah"],
+        "90517":["Sandakan","Sabah"],"90518":["Sandakan","Sabah"],
+        "90519":["Sandakan","Sabah"],"90520":["Sandakan","Sabah"],
+        "91000":["Lahad Datu","Sabah"],"91100":["Lahad Datu","Sabah"],
+        "91200":["Lahad Datu","Sabah"],"91300":["Lahad Datu","Sabah"],
+        "91400":["Lahad Datu","Sabah"],"91500":["Lahad Datu","Sabah"],
+        // SARAWAK
+        "93000":["Kuching","Sarawak"],"93050":["Kuching","Sarawak"],
+        "93100":["Kuching","Sarawak"],"93150":["Kuching","Sarawak"],
+        "93200":["Kuching","Sarawak"],"93250":["Kuching","Sarawak"],
+        "93300":["Kuching","Sarawak"],"93350":["Kuching","Sarawak"],
+        "93400":["Kuching","Sarawak"],"93450":["Kuching","Sarawak"],
+        "93460":["Kuching","Sarawak"],"93500":["Kuching","Sarawak"],
+        "93502":["Kuching","Sarawak"],"93503":["Kuching","Sarawak"],
+        "93504":["Kuching","Sarawak"],"93505":["Kuching","Sarawak"],
+        "93506":["Kuching","Sarawak"],"93508":["Kuching","Sarawak"],
+        "93510":["Kuching","Sarawak"],"93512":["Kuching","Sarawak"],
+        "93514":["Kuching","Sarawak"],"93516":["Kuching","Sarawak"],
+        "93517":["Kuching","Sarawak"],"93518":["Kuching","Sarawak"],
+        "93519":["Kuching","Sarawak"],"93520":["Kuching","Sarawak"],
+        "93522":["Kuching","Sarawak"],"93524":["Kuching","Sarawak"],
+        "93532":["Kuching","Sarawak"],"93534":["Kuching","Sarawak"],
+        "93536":["Kuching","Sarawak"],"93538":["Kuching","Sarawak"],
+        "93540":["Kuching","Sarawak"],"93542":["Kuching","Sarawak"],
+        "93544":["Kuching","Sarawak"],"93546":["Kuching","Sarawak"],
+        "93548":["Kuching","Sarawak"],"93550":["Kuching","Sarawak"],
+        "93560":["Kuching","Sarawak"],"93564":["Kuching","Sarawak"],
+        "93570":["Kuching","Sarawak"],"93576":["Kuching","Sarawak"],
+        "93578":["Kuching","Sarawak"],"93580":["Kuching","Sarawak"],
+        "93582":["Kuching","Sarawak"],"93584":["Kuching","Sarawak"],
+        "93586":["Kuching","Sarawak"],"93590":["Kuching","Sarawak"],
+        "93600":["Kuching","Sarawak"],"93604":["Kuching","Sarawak"],
+        "93608":["Kuching","Sarawak"],"93609":["Kuching","Sarawak"],
+        "93610":["Kuching","Sarawak"],"93620":["Kuching","Sarawak"],
+        "93626":["Kuching","Sarawak"],"93628":["Kuching","Sarawak"],
+        "93630":["Kuching","Sarawak"],"93632":["Kuching","Sarawak"],
+        "93634":["Kuching","Sarawak"],"93700":["Kuching","Sarawak"],
+        "93710":["Kuching","Sarawak"],"93720":["Kuching","Sarawak"],
+        "93730":["Kuching","Sarawak"],"93740":["Kuching","Sarawak"],
+        "93750":["Kuching","Sarawak"],"93760":["Kuching","Sarawak"],
+        "93800":["Kuching","Sarawak"],"93810":["Kuching","Sarawak"],
+        "93900":["Kuching","Sarawak"],"93910":["Kuching","Sarawak"],
+        "93950":["Kuching","Sarawak"],"93960":["Kuching","Sarawak"],
+        "94000":["Kota Samarahan","Sarawak"],"94100":["Kota Samarahan","Sarawak"],
+        "94200":["Kota Samarahan","Sarawak"],"94300":["Kota Samarahan","Sarawak"],
+        "95000":["Sri Aman","Sarawak"],"95100":["Sri Aman","Sarawak"],
+        "96000":["Sarikei","Sarawak"],"96100":["Sarikei","Sarawak"],
+        "96200":["Sarikei","Sarawak"],"96300":["Sarikei","Sarawak"],
+        "96400":["Sibu","Sarawak"],"97000":["Bintulu","Sarawak"],
+        "97100":["Bintulu","Sarawak"],"97200":["Bintulu","Sarawak"],
+        "97300":["Bintulu","Sarawak"],"97400":["Bintulu","Sarawak"],
+        "98000":["Miri","Sarawak"],"98007":["Miri","Sarawak"],
+        "98008":["Miri","Sarawak"],"98009":["Miri","Sarawak"],
+        "98010":["Miri","Sarawak"],"98011":["Miri","Sarawak"],
+        "98012":["Miri","Sarawak"],"98013":["Miri","Sarawak"],
+        "98014":["Miri","Sarawak"],"98015":["Miri","Sarawak"],
+        "98016":["Miri","Sarawak"],"98017":["Miri","Sarawak"],
+        "98018":["Miri","Sarawak"],"98019":["Miri","Sarawak"],
+        "98020":["Miri","Sarawak"],"98050":["Miri","Sarawak"],
+        "98100":["Miri","Sarawak"],"98150":["Miri","Sarawak"],
+        "98200":["Miri","Sarawak"],"98300":["Miri","Sarawak"],
+        "98400":["Miri","Sarawak"],"98450":["Miri","Sarawak"],
+        "98500":["Miri","Sarawak"],"98600":["Miri","Sarawak"],
+        "98700":["Miri","Sarawak"],"98800":["Limbang","Sarawak"],
+        "98900":["Limbang","Sarawak"]
+      };
+
+      const poskodInput = document.getElementById("poskod");
+      const daerahInput = document.getElementById("daerah");
+      const negeriInput = document.getElementById("negeri");
+
+      poskodInput.addEventListener("input", () => {
+        const val = poskodInput.value.trim();
+        if (val.length === 5 && POSKOD[val]) {
+          daerahInput.value = POSKOD[val][0];
+          negeriInput.value = POSKOD[val][1];
+        } else {
+          daerahInput.value = "";
+          negeriInput.value = "";
+        }
+      });
+
+      const form = document.getElementById("daftarForm");
+      const successBox = document.getElementById("successBox");
+      const errMsg = document.getElementById("errMsg");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errMsg.style.display = "none";
+        const fd = new FormData(form);
+        const body = Object.fromEntries(fd.entries());
+
+        try {
+          const res = await fetch("/affiliate/daftar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Ralat berlaku.");
+          form.style.display = "none";
+          successBox.style.display = "block";
+        } catch (err) {
+          errMsg.textContent = err.message;
+          errMsg.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

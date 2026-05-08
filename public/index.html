@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TikTok Affiliate Admin</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="layout">
+      <section class="hero">
+        <p class="eyebrow">TikTok Affiliate Admin</p>
+        <h1>Dashboard pengurusan affiliate & laporan live.</h1>
+      </section>
+
+      <section class="toolbar card">
+        <label>
+          <span>Admin API Key</span>
+          <input id="apiKey" type="password" placeholder="Bearer token">
+        </label>
+        <div class="tab-buttons">
+          <button id="tabReports" class="tab-btn active">Laporan</button>
+          <button id="tabDataTiktok" class="tab-btn">Data TikTok</button>
+          <button id="tabAccounts" class="tab-btn">Akaun TikTok</button>
+          <button id="tabAffiliates" class="tab-btn">Affiliate</button>
+          <button id="tabMastermind" class="tab-btn">Mastermind</button>
+          <button id="tabStudio" class="tab-btn">Content Studio</button>
+        </div>
+        <label>
+          <span>Status Filter</span>
+          <select id="statusFilter">
+            <option value="">All</option>
+            <option value="awaiting_metadata">awaiting_metadata</option>
+            <option value="extracted_pending_review">extracted_pending_review</option>
+            <option value="approved">approved</option>
+            <option value="rejected">rejected</option>
+            <option value="error">error</option>
+          </select>
+        </label>
+        <button id="refreshButton" class="primary">Refresh</button>
+      </section>
+
+      <!-- REPORTS TAB -->
+      <section id="reportsTab" class="content">
+        <div class="card list-card">
+          <div class="section-heading">
+            <h2>Submissions</h2>
+            <p id="listSummary">No data loaded yet.</p>
+          </div>
+          <div id="submissionList" class="submission-list"></div>
+        </div>
+
+        <div class="card detail-card">
+          <div class="section-heading">
+            <h2>Review Details</h2>
+            <p id="detailSummary">Select a submission to review.</p>
+          </div>
+
+          <div id="emptyState" class="empty-state">No submission selected.</div>
+
+          <div id="detailPanel" class="detail-panel hidden">
+            <div class="preview-shell">
+              <img id="submissionImage" alt="Submission screenshot preview">
+            </div>
+
+            <form id="reviewForm">
+              <div class="grid two-col">
+                <label><span>Staff</span><input name="staffName"></label>
+                <label><span>Host</span><input name="hostName"></label>
+                <label><span>Live Session</span><input name="liveSessionIdOrLabel"></label>
+                <label><span>Report Date</span><input name="reportDate"></label>
+              </div>
+
+              <div class="grid two-col metrics-grid">
+                <label><span>Start Time</span><input name="start_time"></label>
+                <label><span>End Time</span><input name="end_time"></label>
+                <label><span>Duration</span><input name="duration"></label>
+                <label><span>Spent (RM)</span><input name="spent" type="number" step="0.01"></label>
+                <label><span>Sales GMV (RM)</span><input name="sales_gmv" type="number" step="0.01"></label>
+                <label><span>ROI</span><input name="roi" type="number" step="0.01"></label>
+              </div>
+
+              <div class="grid two-col">
+                <label><span>Confidence</span><input name="confidence" type="number" min="0" max="1" step="0.01"></label>
+                <label><span>Reviewer</span><input name="reviewer" value="admin"></label>
+              </div>
+
+              <label>
+                <span>Warnings</span>
+                <textarea name="warnings" rows="3"></textarea>
+              </label>
+
+              <label>
+                <span>Rejection reason</span>
+                <textarea name="rejectionReason" rows="2"></textarea>
+              </label>
+
+              <div class="actions">
+                <button type="submit" class="primary">Approve</button>
+                <button type="button" id="rejectButton" class="secondary">Reject</button>
+                <button type="button" id="retryButton" class="ghost">Retry Extraction</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- DATA TIKTOK TAB -->
+      <section id="dataTiktokTab" class="content hidden">
+        <div class="card" style="grid-column:1/-1">
+          <div class="section-heading">
+            <h2>Data TikTok Shop</h2>
+            <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+              <label style="margin:0">
+                <span>Dari</span>
+                <input id="reportStartDate" type="date" style="width:140px">
+              </label>
+              <label style="margin:0">
+                <span>Hingga</span>
+                <input id="reportEndDate" type="date" style="width:140px">
+              </label>
+              <button id="syncAllBtn" class="primary">Sync Semua</button>
+            </div>
+          </div>
+
+          <h3 style="margin:20px 0 10px">Status Sambungan</h3>
+          <div id="reportingAccountList" class="reporting-account-list"></div>
+
+          <h3 style="margin:24px 0 10px">Keputusan Sync</h3>
+          <div id="reportingResults" class="subtle">Belum ada data. Sync akaun dahulu.</div>
+        </div>
+      </section>
+
+      <!-- AFFILIATES TAB -->
+      <section id="affiliatesTab" class="content hidden">
+        <div class="card list-card">
+          <div class="section-heading">
+            <h2>Senarai Affiliate</h2>
+            <button id="addAffiliateBtn" class="primary small">+ Tambah Affiliate</button>
+            <select id="affiliateStatusFilter">
+              <option value="">Semua</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <input id="affiliateSearch" class="search-input" type="search" placeholder="Cari nama, telefon, emel...">
+          <div id="affiliateList" class="submission-list"></div>
+        </div>
+
+        <div class="card detail-card">
+          <div class="section-heading">
+            <h2>Maklumat Affiliate</h2>
+          </div>
+
+          <div id="affiliateEmptyState" class="empty-state">Pilih affiliate untuk lihat maklumat.</div>
+
+          <div id="affiliateEditPanel" class="hidden">
+            <form id="affiliateEditForm">
+              <h3 id="affiliateEditTitle">Edit Maklumat Affiliate</h3>
+              <input type="hidden" name="id">
+              <div class="grid two-col">
+                <label><span>Nama Lengkap</span><input name="namaLengkap"></label>
+                <label><span>No. Telefon</span><input name="noFon"></label>
+                <label><span>Emel</span><input name="emel" type="email"></label>
+                <label><span>Akaun TikTok</span><input name="akauntTiktok"></label>
+                <label><span>Tarikh Daftar</span><input name="submittedAt" type="datetime-local"></label>
+                <label><span>Nama Bank</span><input name="namaBank"></label>
+                <label><span>No. Akaun Bank</span><input name="noAkauntBank"></label>
+                <label style="grid-column:1/-1"><span>Alamat Penuh</span><textarea name="alamat" rows="3"></textarea></label>
+              </div>
+              <div class="actions" style="margin-top:8px">
+                <button type="submit" class="primary small">Simpan</button>
+                <button type="button" id="afEditCancelBtn" class="ghost small">Batal</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="affiliateDetailPanel" class="hidden">
+            <div class="account-detail">
+              <div class="account-header">
+                <div>
+                  <h3 id="afNama"></h3>
+                  <div class="badge-row">
+                    <span id="afStatus" class="badge"></span>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button id="afApproveBtn" class="primary small">Approve</button>
+                  <button id="afRejectBtn" class="secondary small">Reject</button>
+                  <button id="afEditBtn" class="ghost small">Edit</button>
+                  <button id="afDeleteBtn" class="ghost small">Padam</button>
+                </div>
+              </div>
+
+              <div class="grid two-col info-grid">
+                <div><span class="label">No. Telefon</span><p id="afFon"></p></div>
+                <div><span class="label">Emel</span><p id="afEmel"></p></div>
+                <div><span class="label">TikTok</span><p id="afTiktok"></p></div>
+                <div><span class="label">Tarikh Daftar</span><p id="afDate"></p></div>
+                <div style="grid-column:1/-1">
+                  <span class="label">Alamat</span>
+                  <p id="afAlamat" style="white-space:pre-line"></p>
+                </div>
+              </div>
+
+              <div class="grid two-col info-grid">
+                <div><span class="label">Nama Bank</span><p id="afBank"></p></div>
+                <div><span class="label">No. Akaun Bank</span><p id="afAkauntBank"></p></div>
+              </div>
+
+              <div class="assign-section">
+                <h4>Akaun TikTok Diuruskan</h4>
+                <div id="afManagedAccounts"></div>
+              </div>
+
+              <label><span>Notes Admin</span><textarea id="afNotes" rows="3"></textarea></label>
+              <div class="actions" style="margin-top:8px">
+                <button id="afSaveNotes" class="ghost small">Simpan Notes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACCOUNTS TAB -->
+      <section id="accountsTab" class="content hidden">
+        <div class="card list-card">
+          <div class="section-heading">
+            <h2>Akaun TikTok</h2>
+            <button id="addAccountBtn" class="primary small">+ Tambah Akaun</button>
+          </div>
+          <input id="accountSearch" class="search-input" type="search" placeholder="Cari username, affiliate...">
+          <div id="accountList" class="submission-list"></div>
+        </div>
+
+        <div class="card detail-card">
+          <div class="section-heading">
+            <h2>Maklumat Akaun</h2>
+          </div>
+
+          <!-- ADD/EDIT FORM -->
+          <div id="accountFormPanel" class="hidden">
+            <form id="accountForm">
+              <h3 id="accountFormTitle">Tambah Akaun Baru</h3>
+              <input type="hidden" name="id">
+
+              <div class="grid two-col">
+                <label><span>TikTok Username</span><input name="tiktokUsername" required></label>
+                <label><span>Password</span><input name="password" required></label>
+                <label><span>Email</span><input name="email" type="email"></label>
+                <label><span>No. Telefon</span><input name="phone"></label>
+              </div>
+
+              <div class="grid two-col">
+                <label>
+                  <span>Jenis Akaun</span>
+                  <select name="type">
+                    <option value="HQ">HQ</option>
+                    <option value="Personal">Personal</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Status</span>
+                  <select name="status">
+                    <option value="Idle">Idle</option>
+                    <option value="Active">Active</option>
+                    <option value="Expired">Expired</option>
+                    <option value="Suspended">Suspended</option>
+                  </select>
+                </label>
+              </div>
+
+              <label><span>Notes</span><textarea name="notes" rows="3"></textarea></label>
+
+              <div class="actions">
+                <button type="submit" class="primary">Simpan</button>
+                <button type="button" id="cancelAccountForm" class="ghost">Batal</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ACCOUNT DETAIL VIEW -->
+          <div id="accountDetailPanel" class="hidden">
+            <div class="account-detail">
+              <div class="account-header">
+                <div>
+                  <h3 id="adUsername"></h3>
+                  <div class="badge-row">
+                    <span id="adType" class="badge"></span>
+                    <span id="adStatus" class="badge"></span>
+                    <span id="adInactive" class="badge badge-warn hidden">Inactive 7 hari</span>
+                    <a id="adTiktokLink" href="#" target="_blank" rel="noopener" class="tiktok-link hidden">↗ Lihat Profil TikTok</a>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button id="editAccountBtn" class="ghost small">Edit</button>
+                  <button id="markActiveBtn" class="ghost small">Mark Active</button>
+                  <button id="deleteAccountBtn" class="secondary small">Padam</button>
+                </div>
+              </div>
+
+              <div class="grid two-col info-grid">
+                <div><span class="label">Email</span><p id="adEmail"></p></div>
+                <div><span class="label">Telefon</span><p id="adPhone"></p></div>
+                <div><span class="label">Password</span><p id="adPassword" class="mono"></p></div>
+                <div><span class="label">Last Active</span><p id="adLastActive"></p></div>
+              </div>
+
+              <div id="adNotesBlock">
+                <span class="label">Notes</span>
+                <p id="adNotes"></p>
+              </div>
+
+              <!-- ASSIGN AFFILIATE -->
+              <div class="assign-section">
+                <h4>Affiliate Semasa</h4>
+                <div id="adCurrentAffiliate" class="affiliate-info"></div>
+                <form id="assignForm" class="grid two-col">
+                  <label><span>Nama Affiliate</span>
+                    <select name="name" id="assignAffiliateSelect">
+                      <option value="">-- Pilih Affiliate --</option>
+                    </select>
+                  </label>
+                  <label><span>No. Telefon</span><input name="phone" placeholder="+601x-xxxxxxx" readonly></label>
+                  <label><span>Tarikh Mula</span><input name="startDate" type="date"></label>
+                  <div class="actions">
+                    <button type="submit" class="primary small">Assign</button>
+                    <button type="button" id="unassignBtn" class="secondary small">Unassign</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- HISTORY -->
+              <div>
+                <h4>Sejarah Pengguna</h4>
+                <div id="adHistory" class="history-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="accountEmptyState" class="empty-state">Pilih akaun atau tambah baru.</div>
+        </div>
+      </section>
+
+      <!-- CONTENT STUDIO TAB -->
+      <section id="studioTab" class="content hidden">
+        <!-- Account banner -->
+        <div class="card" style="grid-column:1/-1">
+          <div class="section-heading">
+            <h2>Content Studio</h2>
+            <div id="creatorAccountBanner" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span id="creatorAccountStatus" class="subtle">Semak status akaun...</span>
+              <a id="connectCreatorBtn" href="/auth/creator/connect" class="primary small hidden">Sambung TikTok Creator</a>
+              <button id="disconnectCreatorBtn" class="secondary small hidden">Putus Sambungan</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generator form -->
+        <div class="card list-card">
+          <div class="section-heading">
+            <h2>Jana Kandungan AI</h2>
+          </div>
+          <form id="generateForm">
+            <label>
+              <span>Niche / Topik</span>
+              <input name="niche" placeholder="Contoh: skincare, fashion, makanan" required>
+            </label>
+            <label>
+              <span>Nama Produk (optional)</span>
+              <input name="product" placeholder="Contoh: Rose Hip Serum">
+            </label>
+            <div class="grid two-col">
+              <label>
+                <span>Bahasa</span>
+                <select name="language">
+                  <option value="ms">Bahasa Malaysia</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <label>
+                <span>Style Gambar</span>
+                <select name="imageStyle">
+                  <option value="product showcase">Product showcase</option>
+                  <option value="lifestyle flat lay">Lifestyle flat lay</option>
+                  <option value="before and after">Before &amp; After</option>
+                  <option value="aesthetic minimal">Aesthetic minimal</option>
+                  <option value="outdoor lifestyle">Outdoor lifestyle</option>
+                </select>
+              </label>
+            </div>
+            <div class="actions">
+              <button type="submit" id="generateBtn" class="primary">Jana Sekarang</button>
+              <button type="button" id="captionOnlyBtn" class="ghost">Caption Sahaja</button>
+            </div>
+          </form>
+          <div id="generateStatus" class="subtle" style="margin-top:12px;display:none"></div>
+        </div>
+
+        <!-- Preview + post panel -->
+        <div class="card detail-card">
+          <div class="section-heading">
+            <h2>Preview &amp; Post</h2>
+          </div>
+          <div id="studioEmptyState" class="empty-state">Jana kandungan AI dahulu.</div>
+          <div id="studioPreviewPanel" class="hidden">
+            <div class="preview-shell" id="studioImageWrap">
+              <img id="generatedImage" alt="Generated image" style="max-width:100%;border-radius:8px">
+            </div>
+            <div style="margin-top:16px">
+              <label><span>Caption</span><textarea id="generatedCaption" rows="5" style="width:100%;box-sizing:border-box"></textarea></label>
+              <label style="margin-top:8px"><span>Hashtags</span><textarea id="generatedHashtags" rows="2" style="width:100%;box-sizing:border-box"></textarea></label>
+            </div>
+            <div class="grid two-col" style="margin-top:12px">
+              <label>
+                <span>Jenis Post</span>
+                <select id="postType">
+                  <option value="photo">Photo / Slideshow</option>
+                  <option value="video_url">Video (dari URL)</option>
+                </select>
+              </label>
+              <label>
+                <span>Privasi</span>
+                <select id="postPrivacy">
+                  <option value="PUBLIC_TO_EVERYONE">Public</option>
+                  <option value="FOLLOWER_OF_CREATOR">Followers sahaja</option>
+                  <option value="SELF_ONLY">Draf (Only Me)</option>
+                </select>
+              </label>
+            </div>
+            <div id="videoUrlBlock" style="display:none;margin-top:8px">
+              <label><span>URL Video</span><input id="videoUrlInput" type="url" placeholder="https://..."></label>
+            </div>
+            <div style="margin-top:12px">
+              <label style="display:flex;align-items:center;gap:8px;font-weight:600">
+                <input type="checkbox" id="scheduleCheck"> Jadual Post
+              </label>
+              <div id="scheduleBlock" style="display:none;margin-top:8px">
+                <label><span>Tarikh &amp; Masa (min 15 minit dari sekarang)</span><input type="datetime-local" id="scheduleTime"></label>
+              </div>
+            </div>
+            <div class="actions" style="margin-top:16px">
+              <button id="postToTiktokBtn" class="primary">Post ke TikTok</button>
+              <button id="regenerateBtn" class="ghost">Jana Semula</button>
+            </div>
+            <div id="postStatus" class="subtle" style="margin-top:10px;display:none"></div>
+          </div>
+        </div>
+
+        <!-- Post history -->
+        <div class="card" style="grid-column:1/-1">
+          <div class="section-heading">
+            <h2>Sejarah Post</h2>
+            <button id="refreshPostsBtn" class="ghost small">Refresh</button>
+          </div>
+          <div id="postHistoryList" class="subtle">Belum ada post.</div>
+        </div>
+      </section>
+
+      <!-- MASTERMIND TAB -->
+      <section id="mastermindTab" class="content hidden">
+        <div class="card mindmap-card">
+          <div class="mindmap-wrap">
+            <svg id="mindmapSvg"></svg>
+          </div>
+        </div>
+
+        <!-- Account detail popup -->
+        <div id="mmPopup" class="mm-popup hidden">
+          <button id="mmPopupClose" class="mm-popup-close">✕</button>
+          <h3 id="mmPopUsername"></h3>
+          <div class="badge-row" style="margin-bottom:12px">
+            <span id="mmPopType" class="badge"></span>
+            <span id="mmPopStatus" class="badge"></span>
+          </div>
+          <div class="info-grid grid two-col">
+            <div><span class="label">Email</span><p id="mmPopEmail"></p></div>
+            <div><span class="label">Telefon</span><p id="mmPopPhone"></p></div>
+            <div><span class="label">Password</span><p id="mmPopPassword" class="mono"></p></div>
+            <div><span class="label">Last Active</span><p id="mmPopLastActive"></p></div>
+          </div>
+          <div><span class="label">Affiliate Semasa</span><p id="mmPopAffiliate"></p></div>
+          <a id="mmPopTiktokLink" href="#" target="_blank" rel="noopener" class="tiktok-link" style="margin-top:12px;display:inline-block">↗ Buka Profil TikTok</a>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
