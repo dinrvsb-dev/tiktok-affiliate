@@ -22,7 +22,7 @@ export class TiktokCreatorService {
   buildAuthUrl(redirectUri, { state, scopes = [] } = {}) {
     const verifier = generateCodeVerifier();
     const challenge = generateCodeChallenge(verifier);
-    const defaultScopes = ["user.info.basic", "video.upload", "video.publish", "photo.publish"];
+    const defaultScopes = ["user.info.basic", "video.upload", "video.publish"];
     const scope = [...new Set([...defaultScopes, ...scopes])].join(",");
 
     const params = new URLSearchParams({
