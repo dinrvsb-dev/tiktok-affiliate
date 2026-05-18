@@ -1371,6 +1371,7 @@ function studioInit() {
 
 let batchImageUrl = null;
 let batchGeneratedCopies = []; // [{ openId, displayName, headline, caption, hashtags }]
+let batchCurrentAngle = "";
 let batchInitDone = false;
 
 const batchEls = {
@@ -1383,6 +1384,9 @@ const batchEls = {
   previewImg: document.getElementById("batchPreviewImg"),
   generateBtn: document.getElementById("batchGenerateCopyBtn"),
   generateStatus: document.getElementById("batchGenerateStatus"),
+  angleCard: document.getElementById("batchAngleCard"),
+  angleBox: document.getElementById("batchAngleBox"),
+  regenAngleBtn: document.getElementById("batchRegenAngleBtn"),
   copyEmptyState: document.getElementById("batchCopyEmptyState"),
   copyPanel: document.getElementById("batchCopyPanel"),
   copyList: document.getElementById("batchCopyList"),
@@ -1580,8 +1584,7 @@ batchEls.imageUrl.addEventListener("input", () => {
   }
 });
 
-// Generate copy
-batchEls.generateBtn.addEventListener("click", async () => {
+async function runGenerateCopy(angle = null) {
   const accountIds = batchGetSelectedIds();
   if (!accountIds.length) { batchSetStatus(batchEls.generateStatus, "Pilih sekurang-kurangnya satu akaun", true); return; }
 
@@ -1590,19 +1593,34 @@ batchEls.generateBtn.addEventListener("click", async () => {
   if (!niche) { batchSetStatus(batchEls.generateStatus, "Isi niche dahulu", true); return; }
 
   batchEls.generateBtn.disabled = true;
+  batchEls.regenAngleBtn.disabled = true;
   batchEls.generateBtn.textContent = "Menjana...";
-  batchSetStatus(batchEls.generateStatus, `Jana copy untuk ${accountIds.length} akaun...`);
+
+  const stepMsg = (step, total, msg) =>
+    batchSetStatus(batchEls.generateStatus, `[${step}/${total}] ${msg}`);
+
+  stepMsg(1, 3, angle ? "Guna angle semasa..." : "Jana angle baharu...");
 
   try {
-    const { results } = await adminFetch("/api/batch/generate-copy", {
+    const { angle: returnedAngle, results } = await adminFetch("/api/batch/generate-copy", {
       method: "POST",
       body: JSON.stringify({
         accountIds,
         niche,
         product: fd.get("product")?.trim() || undefined,
-        language: fd.get("language")
+        language: fd.get("language"),
+        angle: angle || undefined
       })
     });
+
+    // Show angle
+    batchCurrentAngle = returnedAngle || "";
+    if (batchCurrentAngle) {
+      batchEls.angleBox.textContent = `"${batchCurrentAngle}"`;
+      batchEls.angleCard.classList.remove("hidden");
+    }
+
+    stepMsg(2, 3, `Copy diterima untuk ${results.length} akaun...`);
 
     batchGeneratedCopies = results.filter((r) => !r.error);
     const errors = results.filter((r) => r.error);
@@ -1637,13 +1655,26 @@ batchEls.generateBtn.addEventListener("click", async () => {
 
     let statusMsg = `Copy berjaya untuk ${batchGeneratedCopies.length} akaun.`;
     if (errors.length) statusMsg += ` ${errors.length} gagal: ${errors.map((e) => `@${e.displayName || e.openId}: ${e.error}`).join("; ")}`;
+    stepMsg(3, 3, `Selesai! ${batchGeneratedCopies.length} copy berjaya.`);
+    let statusMsg = `✓ Copy berjaya untuk ${batchGeneratedCopies.length} akaun.`;
+    if (errors.length) statusMsg += ` ${errors.length} gagal.`;
     batchSetStatus(batchEls.generateStatus, statusMsg, errors.length > 0);
   } catch (e) {
     batchSetStatus(batchEls.generateStatus, `Gagal: ${e.message}`, true);
   } finally {
     batchEls.generateBtn.disabled = false;
+    batchEls.regenAngleBtn.disabled = false;
     batchEls.generateBtn.textContent = "Jana Copy untuk Akaun Terpilih";
   }
+}
+
+// Generate copy button
+batchEls.generateBtn.addEventListener("click", () => runGenerateCopy());
+
+// Regen angle — keep same angle field but regenerate (pass null to force new angle)
+batchEls.regenAngleBtn.addEventListener("click", () => {
+  batchEls.angleBox.textContent = "⏳ Jana angle baru...";
+  runGenerateCopy(null);
 });
 
 // Schedule toggle

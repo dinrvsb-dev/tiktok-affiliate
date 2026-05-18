@@ -138,12 +138,19 @@ export function createBatchPublisherRouter() {
 
   // ── Copy generation ──────────────────────────────────────────────────────────
 
-  // Body: { accountIds: [...], niche, product?, language? }
+  // Body: { accountIds: [...], niche, product?, language?, angle? }
   router.post("/generate-copy", async (req, res, next) => {
     try {
-      const { accountIds, niche, product, language = "ms" } = req.body;
+      const { accountIds, niche, product, language = "ms", angle: providedAngle } = req.body;
       if (!accountIds?.length) return res.status(400).json({ error: "accountIds diperlukan" });
       if (!niche) return res.status(400).json({ error: "niche diperlukan" });
+
+      // Step 1: Generate angle if not provided
+      let angle = providedAngle?.trim() || null;
+      if (!angle) {
+        const angleResult = await copywriter.generateAngle({ niche, product, language });
+        angle = angleResult.angle;
+      }
 
       const results = [];
 
@@ -160,6 +167,7 @@ export function createBatchPublisherRouter() {
             systemInstruction: account.systemInstruction,
             niche,
             product,
+            angle,
             previousCopies,
             language
           });
@@ -170,6 +178,7 @@ export function createBatchPublisherRouter() {
             account.tiktokUsername,
             niche,
             product || "",
+            angle,
             copy.headline,
             copy.caption,
             copy.hashtags,
@@ -182,7 +191,7 @@ export function createBatchPublisherRouter() {
         }
       }
 
-      res.json({ results });
+      res.json({ angle, results });
     } catch (err) { next(err); }
   });
 

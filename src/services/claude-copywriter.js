@@ -6,7 +6,6 @@ Elak mengulang tema atau frasa yang sama dengan caption terdahulu.`;
 
 function runClaude(prompt) {
   return new Promise((resolve, reject) => {
-    // Pipe prompt via stdin to avoid shell escaping issues with newlines
     const proc = spawn("claude", ["-p"], {
       shell: true // needed to find claude.cmd on Windows
     });
@@ -34,8 +33,45 @@ function runClaude(prompt) {
   });
 }
 
+function parseJson(output, label) {
+  const start = output.indexOf("{");
+  const end = output.lastIndexOf("}");
+  if (start === -1 || end === -1) {
+    throw new Error(`Claude tidak menjana JSON untuk ${label}. Output: ${output.slice(0, 200)}`);
+  }
+  return JSON.parse(output.slice(start, end + 1));
+}
+
 export class ClaudeCopywriter {
-  async generateCopy({ systemInstruction, niche, product, previousCopies = [], language = "ms" }) {
+  async generateAngle({ niche, product, language = "ms" }) {
+    const langNote = language === "en"
+      ? "Write in natural English."
+      : "Tulis dalam Bahasa Malaysia yang natural.";
+
+    const prompt = `Kamu adalah content strategist TikTok Malaysia yang pakar dalam emotional storytelling.
+
+${langNote}
+Niche: ${niche}${product ? `\nProduk: ${product}` : ""}
+
+Jana SATU "angle" (sudut cerita) yang:
+- Berdasarkan situasi kehidupan sebenar yang relatable
+- Bermula dengan moment specific yang orang boleh "nampak dalam kepala"
+- Emosional tapi realistic, bukan dramatik berlebihan
+- Sesuai untuk TikTok awareness/soft-sell
+
+Contoh angle yang bagus:
+- "anak dah 3 tahun tapi tak boleh sebut 'mama' dengan jelas"
+- "tengah malam scroll phone, tapi sebenarnya tengah lari dari fikiran sendiri"
+- "bukan penat kerja. penat pretend ok je"
+
+Balas HANYA dalam JSON (tiada teks lain):
+{"angle": "satu ayat angle yang specific dan relatable"}`;
+
+    const output = await runClaude(prompt);
+    return parseJson(output, "angle");
+  }
+
+  async generateCopy({ systemInstruction, niche, product, angle, previousCopies = [], language = "ms" }) {
     const system = systemInstruction?.trim() || DEFAULT_SYSTEM;
 
     const historyNote = previousCopies.length
@@ -46,12 +82,16 @@ export class ClaudeCopywriter {
       ? "Write in natural, engaging English."
       : "Tulis dalam Bahasa Malaysia yang natural dan relatable.";
 
+    const angleNote = angle
+      ? `\nAngle/Sudut Cerita: "${angle}"\nBina caption BERDASARKAN angle ini.`
+      : "";
+
     const fullPrompt = `${system}
 
 ---
 
 ${langNote}
-Niche: ${niche}${product ? `\nProduk: ${product}` : ""}${historyNote}
+Niche: ${niche}${product ? `\nProduk: ${product}` : ""}${angleNote}${historyNote}
 
 Jana SATU set copywriting TikTok. Balas HANYA dalam JSON (tiada teks lain):
 {
@@ -61,12 +101,6 @@ Jana SATU set copywriting TikTok. Balas HANYA dalam JSON (tiada teks lain):
 }`;
 
     const output = await runClaude(fullPrompt);
-
-    const start = output.indexOf("{");
-    const end = output.lastIndexOf("}");
-    if (start === -1 || end === -1) {
-      throw new Error(`Claude tidak menjana JSON. Output: ${output.slice(0, 200)}`);
-    }
-    return JSON.parse(output.slice(start, end + 1));
+    return parseJson(output, "copy");
   }
 }
