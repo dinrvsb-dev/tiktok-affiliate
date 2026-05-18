@@ -136,12 +136,14 @@ function showTab(tab) {
   els.affiliatesTab.classList.toggle("hidden", tab !== "affiliates");
   els.mastermindTab.classList.toggle("hidden", tab !== "mastermind");
   document.getElementById("studioTab").classList.toggle("hidden", tab !== "studio");
+  document.getElementById("batchTab").classList.toggle("hidden", tab !== "batch");
   els.tabReports.classList.toggle("active", tab === "reports");
   els.tabDataTiktok.classList.toggle("active", tab === "dataTiktok");
   els.tabAccounts.classList.toggle("active", tab === "accounts");
   els.tabAffiliates2.classList.toggle("active", tab === "affiliates");
   els.tabMastermind.classList.toggle("active", tab === "mastermind");
   document.getElementById("tabStudio").classList.toggle("active", tab === "studio");
+  document.getElementById("tabBatch").classList.toggle("active", tab === "batch");
   els.statusFilter.parentElement.classList.toggle("hidden", tab !== "reports");
 
   state.apiKey = els.apiKey.value.trim() || state.apiKey;
@@ -152,6 +154,7 @@ function showTab(tab) {
   if (tab === "mastermind") { loadAccounts(); loadAffiliates().then(() => renderMindMap()); }
   if (tab === "dataTiktok") loadReportingAccounts();
   if (tab === "studio") studioInit();
+  if (tab === "batch") batchInit();
 }
 
 els.tabReports.addEventListener("click", () => showTab("reports"));
@@ -160,6 +163,7 @@ els.tabAccounts.addEventListener("click", () => showTab("accounts"));
 els.tabAffiliates2.addEventListener("click", () => showTab("affiliates"));
 els.tabMastermind.addEventListener("click", () => showTab("mastermind"));
 document.getElementById("tabStudio").addEventListener("click", () => showTab("studio"));
+document.getElementById("tabBatch").addEventListener("click", () => showTab("batch"));
 
 // ─── REPORTS ──────────────────────────────────────────────────────────────────
 function toDisplayText(value) { return value || "—"; }
@@ -1362,4 +1366,470 @@ function studioInit() {
     showTab("studio");
   }
 })();
+
+// ─── BATCH PUBLISHER ──────────────────────────────────────────────────────────
+
+let batchImageUrl = null;
+let batchGeneratedCopies = []; // [{ openId, displayName, headline, caption, hashtags }]
+let batchInitDone = false;
+
+const batchEls = {
+  accountList: document.getElementById("batchAccountList"),
+  setupForm: document.getElementById("batchSetupForm"),
+  imageFile: document.getElementById("batchImageFile"),
+  imageUrl: document.getElementById("batchImageUrl"),
+  uploadStatus: document.getElementById("batchUploadStatus"),
+  imagePreview: document.getElementById("batchImagePreview"),
+  previewImg: document.getElementById("batchPreviewImg"),
+  generateBtn: document.getElementById("batchGenerateCopyBtn"),
+  generateStatus: document.getElementById("batchGenerateStatus"),
+  copyEmptyState: document.getElementById("batchCopyEmptyState"),
+  copyPanel: document.getElementById("batchCopyPanel"),
+  copyList: document.getElementById("batchCopyList"),
+  privacy: document.getElementById("batchPrivacy"),
+  scheduleCheck: document.getElementById("batchScheduleCheck"),
+  scheduleBlock: document.getElementById("batchScheduleBlock"),
+  scheduleTime: document.getElementById("batchScheduleTime"),
+  publishBtn: document.getElementById("batchPublishBtn"),
+  saveKitsBtn: document.getElementById("batchSaveKitsBtn"),
+  publishStatus: document.getElementById("batchPublishStatus"),
+  postHistoryList: document.getElementById("batchPostHistoryList")
+};
+
+function batchSetStatus(el, msg, isError = false) {
+  el.style.display = msg ? "block" : "none";
+  el.textContent = msg;
+  el.style.color = isError ? "#e53e3e" : "";
+}
+
+let batchAllAccounts = [];
+
+function batchUpdateSelectedCount() {
+  const n = batchGetSelectedIds().length;
+  document.getElementById("batchSelectedCount").textContent = `${n} dipilih`;
+}
+
+function batchRenderAccountRows(accounts) {
+  if (!accounts.length) {
+    batchEls.accountList.innerHTML = '<p class="subtle" style="padding:12px">Tiada akaun sepadan.</p>';
+    return;
+  }
+  batchEls.accountList.innerHTML = accounts.map((acc) => `
+    <div class="batch-account-row" data-id="${acc.id}" style="border-bottom:1px solid #f0f0f0">
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;min-height:40px">
+        <input type="checkbox" class="batch-account-check" value="${acc.id}" style="flex-shrink:0;width:15px;height:15px;cursor:pointer">
+        <label style="flex:1;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px" onclick="this.previousElementSibling.click()">
+          @${escHtml(acc.tiktokUsername || acc.id)}
+          <span style="font-size:11px;color:#a0aec0;font-weight:400">${acc.type || ""}${acc.status ? " · " + acc.status : ""}</span>
+        </label>
+        <button class="ghost small batch-dna-toggle" data-id="${acc.id}" style="flex-shrink:0;font-size:11px;padding:3px 8px">DNA ▾</button>
+      </div>
+      <div class="batch-dna-editor hidden" id="dna-${acc.id}" style="padding:0 12px 12px;background:#f8fafc;border-top:1px solid #eee">
+        <label style="display:block;margin-top:8px">
+          <span style="font-size:11px;color:#718096;font-weight:600">System Instruction (DNA akaun ini)</span>
+          <textarea class="batch-dna-input" rows="3" style="width:100%;box-sizing:border-box;margin-top:4px;font-size:12px" placeholder="Contoh: Kamu adalah content creator skincare ceria untuk wanita Malaysia 20-35 tahun...">${escHtml(acc.systemInstruction || "")}</textarea>
+        </label>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:6px">
+          <button class="primary small batch-dna-save" data-id="${acc.id}" style="font-size:11px">Simpan</button>
+          <button class="ghost small batch-history-clear" data-id="${acc.id}" style="font-size:11px;color:#e53e3e">Kosong Sejarah</button>
+          <span class="subtle" id="dna-status-${acc.id}" style="font-size:11px"></span>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  batchEls.accountList.querySelectorAll(".batch-account-check").forEach((cb) => {
+    cb.addEventListener("change", batchUpdateSelectedCount);
+  });
+
+  batchEls.accountList.querySelectorAll(".batch-dna-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const editor = document.getElementById(`dna-${btn.dataset.id}`);
+      const hidden = editor.classList.toggle("hidden");
+      btn.textContent = hidden ? "DNA ▾" : "DNA ▴";
+    });
+  });
+
+  batchEls.accountList.querySelectorAll(".batch-dna-save").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const row = btn.closest(".batch-account-row");
+      const systemInstruction = row.querySelector(".batch-dna-input").value.trim();
+      const statusEl = document.getElementById(`dna-status-${btn.dataset.id}`);
+      try {
+        btn.disabled = true; btn.textContent = "Menyimpan...";
+        await adminFetch(`/api/batch/accounts/${btn.dataset.id}/dna`, {
+          method: "PUT", body: JSON.stringify({ systemInstruction })
+        });
+        statusEl.textContent = "Disimpan ✓";
+        setTimeout(() => { statusEl.textContent = ""; }, 2000);
+        const acc = batchAllAccounts.find((a) => a.id === btn.dataset.id);
+        if (acc) acc.systemInstruction = systemInstruction;
+      } catch (e) {
+        statusEl.textContent = `Gagal: ${e.message}`; statusEl.style.color = "#e53e3e";
+      } finally {
+        btn.disabled = false; btn.textContent = "Simpan";
+      }
+    });
+  });
+
+  batchEls.accountList.querySelectorAll(".batch-history-clear").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Kosongkan sejarah copy untuk akaun ini?")) return;
+      try {
+        await adminFetch(`/api/batch/copy-history/${btn.dataset.id}`, { method: "DELETE" });
+        document.getElementById(`dna-status-${btn.dataset.id}`).textContent = "Sejarah dikosongkan ✓";
+      } catch (e) { alert(`Gagal: ${e.message}`); }
+    });
+  });
+}
+
+async function batchLoadAccounts() {
+  try {
+    const { accounts } = await adminFetch("/api/batch/accounts");
+    batchAllAccounts = accounts;
+    if (!accounts.length) {
+      batchEls.accountList.innerHTML = '<p class="subtle" style="padding:12px">Tiada akaun. Tambah dalam tab Akaun TikTok.</p>';
+      return;
+    }
+    batchRenderAccountRows(accounts);
+    batchUpdateSelectedCount();
+  } catch (e) {
+    batchEls.accountList.innerHTML = `<p class="subtle" style="padding:12px;color:#e53e3e">Gagal: ${e.message}</p>`;
+  }
+}
+
+function batchGetSelectedIds() {
+  return [...batchEls.accountList.querySelectorAll(".batch-account-check:checked")].map((c) => c.value);
+}
+
+async function batchLoadImages() {
+  const grid = document.getElementById("batchImageGrid");
+  try {
+    const { images } = await adminFetch("/api/batch/images");
+    if (!images.length) {
+      grid.innerHTML = '<span class="subtle" style="font-size:12px;align-self:center;padding:8px">Belum ada gambar. Hantar dari Custom GPT atau upload manual.</span>';
+      return;
+    }
+    grid.innerHTML = images.map((img) => `
+      <div class="batch-img-thumb" data-url="${img.imageUrl}" title="${img.filename}"
+        style="cursor:pointer;border:2px solid transparent;border-radius:6px;overflow:hidden;width:72px;height:72px;flex-shrink:0">
+        <img src="${img.imageUrl}" style="width:100%;height:100%;object-fit:cover" loading="lazy">
+      </div>
+    `).join("");
+
+    grid.querySelectorAll(".batch-img-thumb").forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        grid.querySelectorAll(".batch-img-thumb").forEach((t) => t.style.borderColor = "transparent");
+        thumb.style.borderColor = "#4299e1";
+        batchImageUrl = thumb.dataset.url;
+        document.getElementById("batchPreviewImg").src = batchImageUrl;
+        document.getElementById("batchImagePreview").style.display = "block";
+        batchSetStatus(batchEls.uploadStatus, "");
+        batchEls.imageUrl.value = "";
+        batchEls.imageFile.value = "";
+      });
+    });
+  } catch (e) {
+    grid.innerHTML = `<span class="subtle" style="font-size:12px;color:#e53e3e;padding:8px">Gagal load: ${e.message}</span>`;
+  }
+}
+
+// Image file upload
+batchEls.imageFile.addEventListener("change", async () => {
+  const file = batchEls.imageFile.files[0];
+  if (!file) return;
+
+  batchSetStatus(batchEls.uploadStatus, "Menghantar gambar...");
+  batchImageUrl = null;
+  batchEls.imageUrl.value = "";
+
+  try {
+    const reader = new FileReader();
+    const imageData = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const { imageUrl } = await adminFetch("/api/batch/upload-image", {
+      method: "POST",
+      body: JSON.stringify({ imageData, filename: file.name })
+    });
+
+    batchImageUrl = imageUrl;
+    batchEls.previewImg.src = imageData;
+    batchEls.imagePreview.style.display = "block";
+    batchSetStatus(batchEls.uploadStatus, `Upload berjaya. URL: ${imageUrl}`);
+  } catch (e) {
+    batchSetStatus(batchEls.uploadStatus, `Gagal upload: ${e.message}`, true);
+  }
+});
+
+// Manual URL input
+batchEls.imageUrl.addEventListener("input", () => {
+  const url = batchEls.imageUrl.value.trim();
+  if (url) {
+    batchImageUrl = url;
+    batchEls.previewImg.src = url;
+    batchEls.imagePreview.style.display = "block";
+    batchSetStatus(batchEls.uploadStatus, "");
+    batchEls.imageFile.value = "";
+  } else {
+    batchImageUrl = null;
+    batchEls.imagePreview.style.display = "none";
+  }
+});
+
+// Generate copy
+batchEls.generateBtn.addEventListener("click", async () => {
+  const accountIds = batchGetSelectedIds();
+  if (!accountIds.length) { batchSetStatus(batchEls.generateStatus, "Pilih sekurang-kurangnya satu akaun", true); return; }
+
+  const fd = new FormData(batchEls.setupForm);
+  const niche = fd.get("niche")?.trim();
+  if (!niche) { batchSetStatus(batchEls.generateStatus, "Isi niche dahulu", true); return; }
+
+  batchEls.generateBtn.disabled = true;
+  batchEls.generateBtn.textContent = "Menjana...";
+  batchSetStatus(batchEls.generateStatus, `Jana copy untuk ${accountIds.length} akaun...`);
+
+  try {
+    const { results } = await adminFetch("/api/batch/generate-copy", {
+      method: "POST",
+      body: JSON.stringify({
+        accountIds,
+        niche,
+        product: fd.get("product")?.trim() || undefined,
+        language: fd.get("language")
+      })
+    });
+
+    batchGeneratedCopies = results.filter((r) => !r.error);
+    const errors = results.filter((r) => r.error);
+    // Normalize: use accountId as the identifier field
+
+    if (!batchGeneratedCopies.length) {
+      batchSetStatus(batchEls.generateStatus, `Semua gagal: ${errors.map((e) => e.error).join(", ")}`, true);
+      return;
+    }
+
+    // Render copy review panel
+    batchEls.copyList.innerHTML = batchGeneratedCopies.map((r, i) => `
+      <div class="batch-copy-item" data-index="${i}" style="border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:12px">
+        <h4 style="margin:0 0 10px;color:#2b6cb0">@${r.displayName || r.accountId}</h4>
+        <label style="display:block;margin-bottom:8px">
+          <span style="font-size:12px;font-weight:600">Headline</span>
+          <input class="copy-headline" value="${escHtml(r.headline || "")}" style="width:100%;box-sizing:border-box;margin-top:4px">
+        </label>
+        <label style="display:block;margin-bottom:8px">
+          <span style="font-size:12px;font-weight:600">Caption</span>
+          <textarea class="copy-caption" rows="5" style="width:100%;box-sizing:border-box;margin-top:4px">${escHtml(r.caption || "")}</textarea>
+        </label>
+        <label style="display:block">
+          <span style="font-size:12px;font-weight:600">Hashtags</span>
+          <input class="copy-hashtags" value="${escHtml(r.hashtags || "")}" style="width:100%;box-sizing:border-box;margin-top:4px">
+        </label>
+      </div>
+    `).join("");
+
+    batchEls.copyEmptyState.classList.add("hidden");
+    batchEls.copyPanel.classList.remove("hidden");
+
+    let statusMsg = `Copy berjaya untuk ${batchGeneratedCopies.length} akaun.`;
+    if (errors.length) statusMsg += ` ${errors.length} gagal: ${errors.map((e) => `@${e.displayName || e.openId}: ${e.error}`).join("; ")}`;
+    batchSetStatus(batchEls.generateStatus, statusMsg, errors.length > 0);
+  } catch (e) {
+    batchSetStatus(batchEls.generateStatus, `Gagal: ${e.message}`, true);
+  } finally {
+    batchEls.generateBtn.disabled = false;
+    batchEls.generateBtn.textContent = "Jana Copy untuk Akaun Terpilih";
+  }
+});
+
+// Schedule toggle
+batchEls.scheduleCheck.addEventListener("change", () => {
+  batchEls.scheduleBlock.style.display = batchEls.scheduleCheck.checked ? "block" : "none";
+});
+
+// Save as Kits (for Chrome Extension)
+batchEls.saveKitsBtn.addEventListener("click", async () => {
+  if (!batchImageUrl) {
+    batchSetStatus(batchEls.publishStatus, "Upload gambar atau masukkan URL dahulu", true);
+    batchEls.publishStatus.style.display = "block";
+    return;
+  }
+  if (!batchGeneratedCopies.length) {
+    batchSetStatus(batchEls.publishStatus, "Jana copy dahulu", true);
+    batchEls.publishStatus.style.display = "block";
+    return;
+  }
+
+  const copies = [];
+  batchEls.copyList.querySelectorAll(".batch-copy-item").forEach((el, i) => {
+    const r = batchGeneratedCopies[i];
+    if (!r) return;
+    copies.push({
+      accountId: r.accountId,
+      displayName: r.displayName,
+      headline: el.querySelector(".copy-headline").value.trim(),
+      caption: el.querySelector(".copy-caption").value.trim(),
+      hashtags: el.querySelector(".copy-hashtags").value.trim()
+    });
+  });
+
+  batchEls.saveKitsBtn.disabled = true;
+  batchEls.saveKitsBtn.textContent = "Menyimpan...";
+  batchEls.publishStatus.style.display = "block";
+  batchEls.publishStatus.textContent = "Simpan kits...";
+  batchEls.publishStatus.style.color = "";
+
+  try {
+    const scheduledAt = batchEls.scheduleCheck.checked && batchEls.scheduleTime.value
+      ? new Date(batchEls.scheduleTime.value).toISOString()
+      : null;
+
+    const { kits } = await adminFetch("/api/batch/kits", {
+      method: "POST",
+      body: JSON.stringify({ copies, imageUrl: batchImageUrl, privacyLevel: batchEls.privacy.value, scheduledAt })
+    });
+
+    batchEls.publishStatus.textContent = `✓ ${kits.length} kit disimpan. Buka Chrome Extension untuk post ke TikTok.`;
+    batchEls.publishStatus.style.color = "#2f9e44";
+    batchGeneratedCopies = [];
+    batchEls.copyPanel.classList.add("hidden");
+    batchEls.copyEmptyState.classList.remove("hidden");
+    batchLoadPosts();
+  } catch (e) {
+    batchEls.publishStatus.textContent = `Gagal: ${e.message}`;
+    batchEls.publishStatus.style.color = "#e53e3e";
+  } finally {
+    batchEls.saveKitsBtn.disabled = false;
+    batchEls.saveKitsBtn.textContent = "Simpan sebagai Kit (Extension)";
+  }
+});
+
+// Publish
+batchEls.publishBtn.addEventListener("click", async () => {
+  if (!batchImageUrl) {
+    batchSetStatus(batchEls.publishStatus, "Upload gambar atau masukkan URL gambar dahulu", true);
+    batchEls.publishStatus.style.display = "block";
+    return;
+  }
+  if (!batchGeneratedCopies.length) {
+    batchSetStatus(batchEls.publishStatus, "Jana copy dahulu", true);
+    batchEls.publishStatus.style.display = "block";
+    return;
+  }
+
+  const scheduledAt = batchEls.scheduleCheck.checked && batchEls.scheduleTime.value
+    ? new Date(batchEls.scheduleTime.value).toISOString()
+    : null;
+
+  // Collect edited copy from inputs
+  const posts = [];
+  batchEls.copyList.querySelectorAll(".batch-copy-item").forEach((el, i) => {
+    const r = batchGeneratedCopies[i];
+    if (!r) return;
+    const headline = el.querySelector(".copy-headline").value.trim();
+    const caption = `${headline}\n\n${el.querySelector(".copy-caption").value.trim()}`.trim();
+    const hashtags = el.querySelector(".copy-hashtags").value.trim();
+    posts.push({ openId: r.openId, caption, hashtags });
+  });
+
+  batchEls.publishBtn.disabled = true;
+  batchEls.publishBtn.textContent = "Posting...";
+  batchEls.publishStatus.style.display = "block";
+  batchEls.publishStatus.textContent = `Hantar ke ${posts.length} akaun TikTok...`;
+  batchEls.publishStatus.style.color = "";
+
+  try {
+    const { results } = await adminFetch("/api/batch/publish", {
+      method: "POST",
+      body: JSON.stringify({
+        posts,
+        imageUrls: [batchImageUrl],
+        privacyLevel: batchEls.privacy.value,
+        scheduledAt
+      })
+    });
+
+    const ok = results.filter((r) => r.success);
+    const fail = results.filter((r) => !r.success);
+    let msg = ``;
+    if (ok.length) msg += `✓ Berjaya: ${ok.map((r) => `@${r.displayName}`).join(", ")}. `;
+    if (fail.length) msg += `✗ Gagal: ${fail.map((r) => `@${r.displayName}: ${r.error}`).join("; ")}`;
+    batchEls.publishStatus.textContent = msg;
+    batchEls.publishStatus.style.color = fail.length > 0 ? "#e53e3e" : "#2f9e44";
+
+    batchLoadPosts();
+  } catch (e) {
+    batchEls.publishStatus.textContent = `Gagal: ${e.message}`;
+    batchEls.publishStatus.style.color = "#e53e3e";
+  } finally {
+    batchEls.publishBtn.disabled = false;
+    batchEls.publishBtn.textContent = "Post Semua ke TikTok";
+  }
+});
+
+async function batchLoadPosts() {
+  try {
+    const { posts } = await adminFetch("/api/batch/posts");
+    if (!posts.length) {
+      batchEls.postHistoryList.innerHTML = '<p class="subtle">Belum ada batch post.</p>';
+      return;
+    }
+    batchEls.postHistoryList.innerHTML = `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="border-bottom:2px solid #e2e8f0;text-align:left">
+        <th style="padding:8px 12px">Akaun</th>
+        <th style="padding:8px 12px">Caption</th>
+        <th style="padding:8px 12px">Status</th>
+        <th style="padding:8px 12px">Tarikh</th>
+      </tr></thead>
+      <tbody>${posts.map((p) => `
+        <tr style="border-bottom:1px solid #f0f0f0">
+          <td style="padding:8px 12px">@${escHtml(p.displayName || p.openId)}</td>
+          <td style="padding:8px 12px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(p.caption?.slice(0, 100) || "")}</td>
+          <td style="padding:8px 12px"><span class="badge ${p.status}">${p.status}</span></td>
+          <td style="padding:8px 12px;white-space:nowrap">${new Date(p.createdAt).toLocaleString("ms-MY")}</td>
+        </tr>`).join("")}
+      </tbody></table></div>`;
+  } catch (e) {
+    batchEls.postHistoryList.innerHTML = `<p class="subtle" style="color:#e53e3e">Gagal: ${e.message}</p>`;
+  }
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function batchInit() {
+  if (!batchInitDone) {
+    batchInitDone = true;
+    document.getElementById("batchRefreshAccountsBtn").addEventListener("click", batchLoadAccounts);
+    document.getElementById("refreshBatchPostsBtn").addEventListener("click", batchLoadPosts);
+    document.getElementById("batchRefreshImagesBtn").addEventListener("click", batchLoadImages);
+
+    document.getElementById("batchAccountSearch").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const filtered = q
+        ? batchAllAccounts.filter((a) => (a.tiktokUsername || "").toLowerCase().includes(q))
+        : batchAllAccounts;
+      batchRenderAccountRows(filtered);
+      batchUpdateSelectedCount();
+    });
+
+    document.getElementById("batchSelectAll").addEventListener("click", () => {
+      batchEls.accountList.querySelectorAll(".batch-account-check").forEach((cb) => { cb.checked = true; });
+      batchUpdateSelectedCount();
+    });
+
+    document.getElementById("batchDeselectAll").addEventListener("click", () => {
+      batchEls.accountList.querySelectorAll(".batch-account-check").forEach((cb) => { cb.checked = false; });
+      batchUpdateSelectedCount();
+    });
+  }
+  batchLoadAccounts();
+  batchLoadImages();
+  batchLoadPosts();
+}
 

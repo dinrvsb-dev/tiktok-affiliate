@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "TikTok Batch Publisher",
+  "version": "1.0",
+  "description": "Auto-post content kits ke TikTok dari webapp",
+  "permissions": ["activeTab", "storage", "scripting", "tabs"],
+  "host_permissions": [
+    "https://www.tiktok.com/*",
+    "http://localhost:3000/*",
+    "https://tiktok-affiliate-2uuc.onrender.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Batch Publisher"
+  }
+}

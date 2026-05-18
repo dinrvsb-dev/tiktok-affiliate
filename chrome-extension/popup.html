@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { width: 400px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; background: #fff; color: #1a1a1a; }
+
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid #e8e8e8; }
+    .header h2 { font-size: 15px; font-weight: 700; }
+    .header-actions { display: flex; gap: 6px; }
+
+    #settingsPanel { background: #f8fafc; padding: 12px 14px; border-bottom: 1px solid #e8e8e8; display: none; }
+    #settingsPanel label { display: block; font-size: 11px; font-weight: 600; color: #555; margin-bottom: 3px; margin-top: 8px; }
+    #settingsPanel label:first-of-type { margin-top: 0; }
+    #settingsPanel input { width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 12px; }
+
+    .kits-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px 6px; }
+    .kits-header span { font-size: 11px; color: #888; }
+
+    #kitList { padding: 0 14px 14px; max-height: 480px; overflow-y: auto; }
+
+    .kit-item { border: 1px solid #e2e8f0; border-radius: 8px; padding: 11px 12px; margin-bottom: 8px; }
+    .kit-item.in-progress { border-color: #90cdf4; background: #ebf8ff; }
+    .kit-item.posted { border-color: #9ae6b4; background: #f0fff4; opacity: 0.7; }
+
+    .kit-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .kit-account { font-weight: 700; font-size: 13px; color: #2b6cb0; }
+    .badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; white-space: nowrap; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-in_progress { background: #bee3f8; color: #2c5282; }
+    .badge-posted { background: #c6f6d5; color: #22543d; }
+    .badge-skipped { background: #e2e8f0; color: #4a5568; }
+
+    .kit-headline { font-size: 12px; font-weight: 600; color: #333; margin-bottom: 3px; }
+    .kit-caption { font-size: 11px; color: #666; line-height: 1.4; max-height: 48px; overflow: hidden; white-space: pre-line; }
+
+    .kit-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .kit-status { font-size: 11px; margin-top: 5px; min-height: 14px; }
+
+    button { padding: 5px 11px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; transition: opacity 0.15s; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: #4299e1; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #3182ce; }
+    .btn-success { background: #38a169; color: #fff; }
+    .btn-success:hover:not(:disabled) { background: #2f855a; }
+    .btn-danger { background: #e53e3e; color: #fff; }
+    .btn-danger:hover:not(:disabled) { background: #c53030; }
+    .btn-ghost { background: #edf2f7; color: #4a5568; }
+    .btn-ghost:hover:not(:disabled) { background: #e2e8f0; }
+    .btn-sm { padding: 4px 9px; font-size: 11px; }
+
+    .empty { text-align: center; padding: 30px 14px; color: #888; line-height: 1.6; }
+    .empty strong { display: block; margin-bottom: 6px; color: #555; }
+
+    .filter-tabs { display: flex; gap: 4px; padding: 8px 14px 0; }
+    .filter-tab { padding: 4px 10px; border-radius: 20px; border: 1px solid #e2e8f0; background: #fff; font-size: 11px; cursor: pointer; color: #555; }
+    .filter-tab.active { background: #4299e1; color: #fff; border-color: #4299e1; font-weight: 600; }
+
+    .server-indicator { font-size: 10px; color: #a0aec0; padding: 4px 14px; border-bottom: 1px solid #f0f0f0; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>📤 Batch Publisher</h2>
+    <div class="header-actions">
+      <button class="btn-ghost btn-sm" id="refreshBtn">↺ Refresh</button>
+      <button class="btn-ghost btn-sm" id="toggleSettings">⚙</button>
+    </div>
+  </div>
+
+  <div id="settingsPanel">
+    <label>Server URL</label>
+    <input id="serverUrl" placeholder="http://localhost:3000" type="url">
+    <label>Admin API Key</label>
+    <input id="apiKey" type="password" placeholder="change-me">
+    <div style="margin-top:10px">
+      <button class="btn-primary" id="saveSettings" style="width:100%">Simpan Settings</button>
+    </div>
+  </div>
+
+  <div class="server-indicator" id="serverIndicator">Server: —</div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-status="pending">Pending</button>
+    <button class="filter-tab" data-status="in_progress">In Progress</button>
+    <button class="filter-tab" data-status="">Semua</button>
+  </div>
+
+  <div class="kits-header">
+    <span id="kitCount">—</span>
+  </div>
+
+  <div id="kitList"><div class="empty"><strong>Loading...</strong></div></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

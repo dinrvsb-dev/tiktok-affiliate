@@ -24,7 +24,8 @@
           <button id="tabAccounts" class="tab-btn">Akaun TikTok</button>
           <button id="tabAffiliates" class="tab-btn">Affiliate</button>
           <button id="tabMastermind" class="tab-btn">Mastermind</button>
-          <button id="tabStudio" class="tab-btn">Content Studio</button>
+          <button id="tabStudio" class="tab-btn hidden">Content Studio</button>
+          <button id="tabBatch" class="tab-btn">Batch Publisher</button>
         </div>
         <label>
           <span>Status Filter</span>
@@ -455,6 +456,114 @@
             <button id="refreshPostsBtn" class="ghost small">Refresh</button>
           </div>
           <div id="postHistoryList" class="subtle">Belum ada post.</div>
+        </div>
+      </section>
+
+      <!-- BATCH PUBLISHER TAB -->
+      <section id="batchTab" class="content hidden">
+        <!-- Setup + Account selector -->
+        <div class="card list-card">
+          <div class="section-heading">
+            <h2>Batch Publisher</h2>
+            <button id="batchRefreshAccountsBtn" class="ghost small">Refresh</button>
+          </div>
+
+          <form id="batchSetupForm">
+            <div class="grid two-col">
+              <label><span>Niche / Topik</span><input name="niche" placeholder="Contoh: skincare, fashion, makanan" required></label>
+              <label><span>Nama Produk (optional)</span><input name="product" placeholder="Contoh: Rose Hip Serum"></label>
+            </div>
+            <label>
+              <span>Bahasa</span>
+              <select name="language">
+                <option value="ms">Bahasa Malaysia</option>
+                <option value="en">English</option>
+              </select>
+            </label>
+          </form>
+
+          <h3 style="margin:20px 0 8px">Pilih Akaun TikTok</h3>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+            <input id="batchAccountSearch" type="search" placeholder="Cari username..." style="flex:1;min-width:160px;padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:13px">
+            <button id="batchSelectAll" class="ghost small">Pilih Semua</button>
+            <button id="batchDeselectAll" class="ghost small">Nyahpilih</button>
+            <span id="batchSelectedCount" class="subtle" style="font-size:12px">0 dipilih</span>
+          </div>
+          <div id="batchAccountList" style="border:1px solid #e2e8f0;border-radius:8px;max-height:260px;overflow-y:auto">
+            <p class="subtle" style="padding:12px">Tiada akaun. Tambah akaun dalam tab Akaun TikTok dahulu.</p>
+          </div>
+
+          <h3 style="margin:20px 0 8px">Gambar</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <button id="batchRefreshImagesBtn" class="ghost small">↺ Refresh Gambar</button>
+            <span class="subtle" style="font-size:12px;align-self:center">Gambar dari Custom GPT akan muncul di sini</span>
+          </div>
+          <div id="batchImageGrid" style="display:flex;gap:8px;flex-wrap:wrap;min-height:60px;padding:8px;border:1px solid #e2e8f0;border-radius:8px;background:#fafafa">
+            <span class="subtle" style="font-size:12px;align-self:center">Belum ada gambar. Hantar dari Custom GPT atau upload manual.</span>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <label style="font-size:12px;color:#718096">Upload manual:</label>
+            <input type="file" id="batchImageFile" accept="image/*" style="font-size:12px">
+            <span style="font-size:12px;color:#a0aec0">atau</span>
+            <input type="url" id="batchImageUrl" placeholder="Paste URL terus..." style="flex:1;min-width:200px;padding:5px 8px;border:1px solid #e2e8f0;border-radius:6px;font-size:12px">
+          </div>
+          <div id="batchUploadStatus" class="subtle" style="display:none;margin-top:8px"></div>
+          <div id="batchImagePreview" style="display:none;margin-top:10px">
+            <span style="font-size:12px;color:#718096">Gambar dipilih:</span><br>
+            <img id="batchPreviewImg" alt="Preview" style="max-width:160px;border-radius:8px;margin-top:6px;border:2px solid #4299e1">
+          </div>
+
+          <div class="actions" style="margin-top:16px">
+            <button id="batchGenerateCopyBtn" class="primary">Jana Copy untuk Akaun Terpilih</button>
+          </div>
+          <div id="batchGenerateStatus" class="subtle" style="display:none;margin-top:8px"></div>
+        </div>
+
+        <!-- Copy review + post -->
+        <div class="card detail-card">
+          <div class="section-heading">
+            <h2>Review Copy &amp; Post</h2>
+          </div>
+
+          <div id="batchCopyEmptyState" class="empty-state">Jana copy dahulu.</div>
+
+          <div id="batchCopyPanel" class="hidden">
+            <div id="batchCopyList"></div>
+
+            <div class="grid two-col" style="margin-top:16px">
+              <label>
+                <span>Privasi</span>
+                <select id="batchPrivacy">
+                  <option value="PUBLIC_TO_EVERYONE">Public</option>
+                  <option value="FOLLOWER_OF_CREATOR">Followers Sahaja</option>
+                  <option value="SELF_ONLY">Draf (Only Me)</option>
+                </select>
+              </label>
+              <div>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:8px">
+                  <input type="checkbox" id="batchScheduleCheck"> Jadual Post
+                </label>
+                <div id="batchScheduleBlock" style="display:none">
+                  <label><span>Tarikh &amp; Masa (min 15 min dari sekarang)</span><input type="datetime-local" id="batchScheduleTime"></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions" style="margin-top:16px">
+              <button id="batchSaveKitsBtn" class="primary">Simpan sebagai Kit (Extension)</button>
+              <button id="batchPublishBtn" class="ghost">Post Terus (Creator API)</button>
+            </div>
+            <div id="batchPublishStatus" style="display:none;margin-top:12px"></div>
+          </div>
+        </div>
+
+        <!-- Batch post history -->
+        <div class="card" style="grid-column:1/-1">
+          <div class="section-heading">
+            <h2>Sejarah Batch Post</h2>
+            <button id="refreshBatchPostsBtn" class="ghost small">Refresh</button>
+          </div>
+          <div id="batchPostHistoryList" class="subtle">Belum ada batch post.</div>
         </div>
       </section>
 

@@ -12,6 +12,7 @@ import { createCreatorOAuthRouter } from "./routes/creator-oauth.js";
 import { createContentStudioRouter } from "./routes/content-studio-api.js";
 import { createReportingRouter } from "./routes/reporting-api.js";
 import { createDataTransferRouter } from "./routes/data-transfer-api.js";
+import { createBatchPublisherRouter } from "./routes/batch-publisher-api.js";
 import { GoogleDriveService } from "./services/google-drive-service.js";
 import { createGoogleAuthClient } from "./services/google-auth.js";
 import { GoogleSheetsService } from "./services/google-sheets-service.js";
@@ -53,6 +54,7 @@ async function main() {
   app.use("/webhooks/whatsapp", createWhatsAppWebhookRouter({ submissionService }));
   app.use("/affiliate", createAffiliatePublicRouter());
   app.use("/api/studio", adminAuthMiddleware(config), createContentStudioRouter());
+  app.use("/api/batch", adminAuthMiddleware(config), createBatchPublisherRouter());
   app.use("/api/data", adminAuthMiddleware(config), createDataTransferRouter());
   app.use("/api/reporting", adminAuthMiddleware(config), createReportingRouter());
   app.use("/api/accounts", adminAuthMiddleware(config), createAccountsRouter());

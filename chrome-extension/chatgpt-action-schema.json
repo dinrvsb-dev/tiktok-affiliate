@@ -1,0 +1,61 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TikTok Batch Publisher",
+    "description": "Send generated images to the TikTok Batch Publisher webapp",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://tiktok-affiliate-2uuc.onrender.com"
+    }
+  ],
+  "paths": {
+    "/api/batch/receive-image": {
+      "post": {
+        "operationId": "sendImageToWebapp",
+        "summary": "Send a generated image URL to the Batch Publisher webapp",
+        "description": "Call this after generating an image. The webapp will fetch and save the image, making it ready for TikTok posting.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["imageUrl"],
+                "properties": {
+                  "imageUrl": {
+                    "type": "string",
+                    "description": "The URL of the generated image"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "Short description of the image (e.g. product name or niche)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Image saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "imageUrl": { "type": "string", "description": "URL of the saved image on the webapp" },
+                    "filename": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
