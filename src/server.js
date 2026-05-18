@@ -20,11 +20,13 @@ import { OpenAiExtractor } from "./services/openai-extractor.js";
 import { SubmissionService } from "./services/submission-service.js";
 import { SubmissionStore } from "./services/submission-store.js";
 import { WhatsAppService } from "./services/whatsapp-service.js";
+import { autoRestoreFromSeedData } from "./lib/seed-restore.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function main() {
+  await autoRestoreFromSeedData();
   const app = express();
   const googleAuthClient = createGoogleAuthClient();
   const submissionService = new SubmissionService({

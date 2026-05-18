@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { config } from "../config.js";
 
-const FILES = ["accounts.json", "affiliates.json", "submissions.json", "creator-accounts.json", "studio-posts.json"];
+const FILES = ["accounts.json", "affiliates.json", "submissions.json", "creator-accounts.json", "studio-posts.json", "content-kits.json", "copy-history.json"];
 
 export function createDataTransferRouter() {
   const router = express.Router();
